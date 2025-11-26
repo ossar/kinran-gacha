@@ -1,8 +1,10 @@
 <?php
 
+$datFile = __DIR__.'/gacha_contents.tsv';
 
+$gachaDat = loadDatFile($datFile);
 
-$gachaCategory = [
+$gachaBreakdowns = [
     "武将確定" => [
         ['確率'=>100, 'items' => ['武将'=> 1,'武運'=> 3, 'アイテム'=> 2, '宝箱'=> 0 ]],
     ],
@@ -19,8 +21,7 @@ $gachaCategory = [
     ],
 ];
 
-
-$gachaSet = [
+$gachaSetlist = [
     1  => ['カテゴリ' => '通常'    , 'モード'=>'通常'            ],
     2  => ['カテゴリ' => '通常'    , 'モード'=>'通常'            ],
     3  => ['カテゴリ' => '武将確定', 'モード'=>'武将星3〜4確定'  ],

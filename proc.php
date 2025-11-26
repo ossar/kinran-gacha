@@ -2,13 +2,12 @@
 require_once __DIR__.'/lib.php';
 
 
-$gachaDat = loadDatFile(__DIR__.'/gacha_contents.tsv');
 
 $expct = [];
 $total = 0;
-foreach ($gachaSet as $idx => $row) {
+foreach ($gachaSetlist as $idx => $row) {
     $mode = $row['モード'];
-    $res = getExpect($gachaDat, $gachaCategory, $mode);
+    $res = getExpect($gachaDat, $gachaBreakdowns, $mode);
     foreach ($res as $name => $exp) {
         if (empty($expct[$name])) {
             $expct[$name] = 0;
@@ -31,10 +30,10 @@ foreach ($expct as $name => $exp) {
 fclose($fp);
 
 
-function getExpect($gachaDat, $gachaCategory, $mode) {
+function getExpect($gachaDat, $gachaBreakdowns, $mode) {
     $expct = [];
     $cate = $gachaDat[$mode]['category'];
-    foreach ($gachaCategory[$cate] as $row) {
+    foreach ($gachaBreakdowns[$cate] as $row) {
         $prob = $row['確率'];
         foreach ($row['items'] as $itemType => $count) {
             if (!$count) {

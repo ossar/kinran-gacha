@@ -1,45 +1,39 @@
 <?php
 require_once __DIR__.'/lib.php';
 
-$gachaDat = loadDatFile(__DIR__.'/gacha_contents.tsv');
+// 集められる武運の一覧を取得
+$buunKeys = getBuunKeys($gachaDat);
 
-#print_r($gachaDat);
 
-foreach ($gachaDat as $mode => $val) {
-    #echo "[$mode] ({$val['category']})\n";
-    foreach ($val['items'] as $itemType => $items) {
-        #echo "#$itemType\n";
-        $res = getGacha($items);
-        #echo implode("/", $res['内容'])."\n";
-    }
-}
-$buunKeys = buunKeys($gachaDat);
-
-$repeatCount = 1500;
+$repeatCount = 1000;
 
 $fp = fopen(__DIR__.'/out.tsv', "w");
 fwrite($fp, implode("\t", $buunKeys)."\n");
 for ($i=0; $i<$repeatCount; $i++) {
-    list($collects, $colBuun) = batchGacha($gachaSet, $gachaDat, $gachaCategory);
+    list($collects, $colBuun) = batchGacha($gachaSetlist, $gachaDat, $gachaBreakdowns);
     $cols = [];
     foreach ($buunKeys as $key) {
         $cols[] = $colBuun[$key]?? 0;
     }
     $line = implode("\t", $cols)."\n";
     fwrite($fp, $line);
-    /*
-    echo "[$i]\n";
-    foreach ($colBuun as $name => $count) {
-        echo "$name\t\t$count\n";
-    }
-    echo "\n";
-     */
+    #foreach ($collects as $val) {
+    #    echo sprintf("%d %s  %s  %s %s  \n"
+    #        , $val['count']
+    #        , $val['item']['内容']['type']
+    #        , $val['item']['内容']['name']
+    #        , $val['item']['内容']['rank']
+    #        , $val['item']['内容']['num']
+    #    );
+    #}
+    #print_r($colBuun);
 }
 fclose($fp);
 
-
-
-function buunKeys($gachaDat) {
+/**
+ * ガチャで出現する武運の武将一覧を取得する
+ */
+function getBuunKeys($gachaDat) {
     $buunKeys = [];
     foreach ($gachaDat as $mode => $row) {
         foreach ($row['items'] as $itemType => $items) {
@@ -67,12 +61,16 @@ function buunKeys($gachaDat) {
 }
 
 
-function batchGacha($gachaSet, $gachaDat, $gachaCategory) {
+/**
+ * ガチャを最後まで引き切る
+ *
+ */
+function batchGacha($gachaSetlist, $gachaDat, $gachaBreakdowns) {
     $collects = [];
     $colBuun = [];
-    foreach ($gachaSet as $idx => $row) {
+    foreach ($gachaSetlist as $idx => $row) {
         $mode = $row['モード'];
-        $list = gacha($gachaDat, $gachaCategory, $mode);
+        $list = gacha($gachaDat, $gachaBreakdowns, $mode);
         foreach ($list as $item) {
             if ($res = getBuun($item)) {
                 if (empty($colBuun[$res[0]])) {
@@ -94,8 +92,10 @@ function batchGacha($gachaSet, $gachaDat, $gachaCategory) {
 }
 
 
-
-
+/**
+ * アイテムの武運換算数を取得する
+ *
+ */
 function getBuun($item) {
     $buun = 0;
     $name = null;
@@ -160,23 +160,12 @@ function getBuun($item) {
     return [$name, $buun];
 }
 
-
-function dumpList($list) {
-    foreach ($list as $item) {
-        echo sprintf(
-            "%s  %s  %s  (%s)  {%s}\n"
-            , $item['内容']['type']
-            , $item['内容']['name']
-            , $item['内容']['rank']
-            , $item['内容']['num']
-            , $item['内容']['itemKey']
-        );
-    }
-}
-
-function gacha($gachaDat, $gachaCategory, $mode) {
+/**
+ * モード指定されたガチャを1セット引く
+ */
+function gacha($gachaDat, $gachaBreakdowns, $mode) {
     $cate = $gachaDat[$mode]['category'];
-    $set = getGachaSet($gachaCategory[$cate]);
+    $set = getGachaSet($gachaBreakdowns[$cate]);
     $list = [];
     foreach ($set['items'] as $itemType => $count) {
         for ($i=0; $i<$count; $i++) {
@@ -185,12 +174,17 @@ function gacha($gachaDat, $gachaCategory, $mode) {
     }
     return $list;
 }
-function getGachaSet($gachaSet) {
+
+/**
+ * アイテム種別の出現割合を決定する
+ * 出現割合セットの合計確率は100%になる必要がある
+ */
+function getGachaSet($gachaProb) {
     $max = 100000;
     $rand = random_int(0,$max)/$max*100;
     $get = null;
     $sum = 0;
-    foreach ($gachaSet as $row) {
+    foreach ($gachaProb as $row) {
         $sum += $row['確率'];
         if ($sum >= $rand) {
             $get = $row;
@@ -203,7 +197,10 @@ function getGachaSet($gachaSet) {
     return $row;
 }
 
-
+/**
+ * アイテムリストから一つゲットする
+ * 各アイテムの出現確率の合計が100%になる必要がある
+ */
 function getGacha($items) {
     $max = 100000;
     $rand = random_int(0,$max)/$max*100;
@@ -215,22 +212,10 @@ function getGacha($items) {
             $get = $item;
             break;
         }
-        continue;
-
-        echo sprintf("  %8.2f\t(%s)\t%s\trank=%s\tnum=%s\n"
-            , $item['確率']
-            , $item['内容']['type']
-            , $item['内容']['name']
-            , $item['内容']['rank']
-            , $item['内容']['num']
-        );
     }
     if (!$get) {
         $get = $item;
     }
     return $get;
-    var_dump($rand);
-    print_r($item);
-    echo "合計={$sum}\n\n";
 }
 

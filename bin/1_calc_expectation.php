@@ -51,7 +51,7 @@ foreach ($expct as $key => $val) {
 echo "\n";
 
 echo "=========武運期待値========\n";
-$fp = fopen(__DIR__.'/expout.tsv', 'w');
+$fp = fopen(dirname(__DIR__).'/dat/expout.tsv', 'w');
 foreach ($buunExpct as $name => $exp) {
     $line = "{$name}\t{$exp}\n";
     fwrite($fp, $line);

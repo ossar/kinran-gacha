@@ -67,10 +67,12 @@ function batchGacha($gachaSets, $gachaModeContents, $gachaTypeSlots) {
         foreach ($list as $row) {
             $item = $row['排出内容'];
             if ($res = getBuun($item)) {
-                if (empty($colBuun[$res[0]])) {
-                    $colBuun[$res[0]] = 0;
+                if ($res[0] && $res[1]) {
+                    if (empty($colBuun[$res[0]])) {
+                        $colBuun[$res[0]] = 0;
+                    }
+                    $colBuun[$res[0]] += $res[1];
                 }
-                $colBuun[$res[0]] += $res[1];
             }
             $key = $item['itemKey'];
             if (empty($collects[$key])) {

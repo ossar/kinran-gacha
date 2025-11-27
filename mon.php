@@ -24,8 +24,11 @@ fclose($fp);
 
 /**
  * ガチャで出現する武運の武将一覧を取得する
+ *
+ * @param    array   排出内容一覧
+ * @return   array   武将名一覧
  */
-function getBuunKeys($gachaModeContents) {
+function getBuunKeys(array $gachaModeContents):array {
     $buunKeys = [];
     foreach ($gachaModeContents as $mode => $row) {
         foreach ($row as $itemType => $items) {
@@ -55,9 +58,13 @@ function getBuunKeys($gachaModeContents) {
 
 /**
  * ガチャを最後まで引き切る
+ * @param     array    セット数一覧
+ * @param     array    排出内容一覧
+ * @param     array    スロット一覧
  *
+ * @return    array    [ 期待値配列, 武運期待値配列 ]
  */
-function batchGacha($gachaSets, $gachaModeContents, $gachaTypeSlots) {
+function batchGacha(array $gachaSets, array $gachaModeContents, array $gachaTypeSlots):array {
     $collects = [];
     $colBuun = [];
     foreach ($gachaSets as $idx => $row) {

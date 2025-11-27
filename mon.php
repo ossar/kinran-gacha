@@ -2,7 +2,7 @@
 require_once __DIR__.'/lib.php';
 
 // 集められる武運の一覧を取得
-$buunKeys = getBuunKeys($gachaDat);
+$buunKeys = getBuunKeys($gachaModeContents);
 
 $fp = fopen(__DIR__.'/out.tsv', "w");
 $line = implode("\t", $buunKeys)."\n";
@@ -11,7 +11,7 @@ echo $line;
 
 $repeatCount = 1000;
 for ($i=0; $i<$repeatCount; $i++) {
-    list($collects, $colBuun) = batchGacha($gachaSets, $gachaDat, $gachaTypeSlots);
+    list($collects, $colBuun) = batchGacha($gachaSets, $gachaModeContents, $gachaTypeSlots);
     $cols = [];
     foreach ($buunKeys as $key) {
         $cols[] = $colBuun[$key]?? 0;
@@ -25,9 +25,9 @@ fclose($fp);
 /**
  * ガチャで出現する武運の武将一覧を取得する
  */
-function getBuunKeys($gachaDat) {
+function getBuunKeys($gachaModeContents) {
     $buunKeys = [];
-    foreach ($gachaDat as $mode => $row) {
+    foreach ($gachaModeContents as $mode => $row) {
         foreach ($row as $itemType => $items) {
             foreach ($items as $item) {
                 switch ($itemType) {
@@ -57,13 +57,13 @@ function getBuunKeys($gachaDat) {
  * ガチャを最後まで引き切る
  *
  */
-function batchGacha($gachaSets, $gachaDat, $gachaTypeSlots) {
+function batchGacha($gachaSets, $gachaModeContents, $gachaTypeSlots) {
     $collects = [];
     $colBuun = [];
     foreach ($gachaSets as $idx => $row) {
         $gachaMode = $row['gachaMode'];
         $gachaType = $row['gachaType'];
-        $list = gacha($gachaDat[$gachaMode], $gachaTypeSlots[$gachaType]);
+        $list = gacha($gachaModeContents[$gachaMode], $gachaTypeSlots[$gachaType]);
         foreach ($list as $row) {
             $item = $row['排出内容'];
             if ($res = getBuun($item)) {

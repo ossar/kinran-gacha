@@ -2,7 +2,7 @@
 
 $datFile = __DIR__.'/gacha_contents.tsv';
 
-$gachaDat = loadDatFile($datFile);
+$gachaModeContents = loadDatFile($datFile);
 
 $gachaSets = [
     1  => [ 'gachaMode'=>'通常'            , 'gachaType' => '通常'     ],

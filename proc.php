@@ -10,7 +10,7 @@ foreach ($gachaSets as $idx => $row) {
     if (isset($memo[$gachaMode])) {
         $res = $memo[$gachaMode];
     } else {
-        $res = getGachaExpct($gachaDat[$gachaMode], $gachaTypeSlots[$gachaType]);
+        $res = getGachaExpct($gachaModeContents[$gachaMode], $gachaTypeSlots[$gachaType]);
         $memo[$gachaMode] = $res;
     }
     foreach ($res as $key => $val) {
@@ -19,7 +19,6 @@ foreach ($gachaSets as $idx => $row) {
         }
         $expct[$key] += $val;
     }
-    continue;
 }
 
 $total = 0;
@@ -30,10 +29,10 @@ foreach ($expct as $key => $val) {
     if (!$res = getBuun($item)) {
         continue;
     }
-    list($name, $buun) = $res;
-    if (!$name || !$buun) {
+    if (!$res[0] || !$res[1]) {
         continue;
     }
+    list($name, $buun) = $res;
     if (!isset($buunExpct[$name])) {
         $buunExpct[$name] = 0;
     }
@@ -42,19 +41,34 @@ foreach ($expct as $key => $val) {
     $total += $exp;
 }
 
-print_r($expct);
-print_r($buunExpct);
+echo "=========アイテムの期待値========\n";
+foreach ($expct as $key => $val) {
+    echo sprintf("%s\t%s\n"
+        , $key
+        , $val
+    );
+}
+echo "\n";
 
+echo "=========武運期待値========\n";
 $fp = fopen(__DIR__.'/expout.tsv', 'w');
-echo "[TOTAL] buun=$total\n";
 foreach ($buunExpct as $name => $exp) {
     $line = "{$name}\t{$exp}\n";
     fwrite($fp, $line);
     echo $line;
 }
 fclose($fp);
+echo "\n";
+echo "[武運合計] buun=$total\n";
 
-function getGachaExpct($gachaContents, $gachaSlots) {
+/**
+ * ガチャ1セットの期待値を出す
+ *
+ * @param   array   排出内容
+ * @param   array   スロット一覧
+ * @return  array   [アイテムのキー=>期待値] の配列
+ */
+function getGachaExpct(array $gachaContents, array $gachaSlots):array {
     $expct = [];
     foreach ($gachaSlots as $slot) {
         $slotProb = $slot['確率'];

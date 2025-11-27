@@ -1,0 +1,300 @@
+<?php
+namespace MyApp;
+
+class Gacha {
+
+    public $gachaTypeSlots;
+    public $gachaSets;
+    public $gachaModeContents;
+
+    public function loadGachaData($filename) {
+        $dat = [];
+        $keys = [];
+        $fp = fopen($filename, "r");
+        while (FALSE !== $line=fgets($fp)) {
+            $line = rtrim($line, "\r\n");
+            $cols = explode("\t", $line);
+            if (!$keys) {
+                $keys = $cols;
+                continue;
+            }
+            $buf = [];
+            foreach ($cols as $idx => $val) {
+                $buf[$keys[$idx]] = $val;
+            }
+            if (empty($dat[$buf['ガチャモード']])) {
+                $dat[$buf['ガチャモード']] = [];
+            }
+            $dat[$buf['ガチャモード']][$buf['排出タイプ']][] = [
+                '排出タイプ' => $buf['排出タイプ'],
+                '排出内容' => $this->parseContent($buf['排出内容'], $buf['排出タイプ']),
+                '確率' => $this->parseProb($buf['確率']),
+            ];
+        }
+        fclose($fp);
+        $this->gachaModeContents = $dat;
+    }
+
+    public function parseProb(string $prob) {
+        $res = rtrim($prob, "%");
+        return floatval($res);
+    }
+
+    public function parseContent(string $itemStr, string $type) {
+        $dat = [
+            'itemKey' => "{$type}:{$itemStr}",
+            'type' => $type,
+            'name' => null,
+            'num'  => null,
+            'rank' => null,
+        ];
+        switch ($type) {
+        case '武将':
+            $buf = explode(" ", $itemStr);
+            $dat['name'] = trim($buf[0]);
+            $dat['rank'] = trim($buf[1]);
+            $dat['num']  = 1;
+            break;
+        case '武運':
+            $buf = explode('x', $itemStr);
+            $dat['name'] = trim($buf[0]);
+            $dat['num'] = intval(trim($buf[1]));
+            break;
+        case '宝箱':
+            $dat['name'] = $itemStr;
+            $dat['num']  = 1;
+            if (preg_match('/(星\d)/u', $itemStr, $match)) {
+                $dat['rank'] = $match[1];
+            }
+            break;
+        case 'アイテム':
+            $dat['name'] = $itemStr;
+            $dat['num']  = 1;
+            break;
+        default:
+            var_dump($type);
+            var_dump($itemStr);
+            throw new RuntimeException('Unknown item type.');
+            break;
+        }
+        return $dat;
+    }
+
+    /**
+     * ガチャで出現する武運の武将一覧を取得する
+     *
+     * @param    array   排出内容一覧
+     * @return   array   武将名一覧
+     */
+    public function getBuunKeys(array $gachaModeContents):array {
+        $buunKeys = [];
+        foreach ($gachaModeContents as $mode => $row) {
+            foreach ($row as $itemType => $items) {
+                foreach ($items as $item) {
+                    switch ($itemType) {
+                    case '武運':
+                        $name = $item['排出内容']['name'];
+                        $buunKeys[$name] = $name;
+                        break;
+                    case '武将':
+                        $name = $item['排出内容']['name'];
+                        $buunKeys[$name] = $name;
+                        break;
+                    case '宝箱':
+                        $name = '選択宝箱';
+                        $buunKeys[$name] = $name;
+                        break;
+                    default:
+                        break;
+                    }
+                }
+            }
+        }
+        return array_values($buunKeys);
+    }
+
+    /**
+     * ガチャ1セットの期待値を出す
+     *
+     * @param   array   排出内容
+     * @param   array   スロット一覧
+     * @return  array   [アイテムのキー=>期待値] の配列
+     */
+    function getGachaExpct(array $gachaContents, array $gachaSlots):array {
+        $expct = [];
+        foreach ($gachaSlots as $slot) {
+            $slotProb = $slot['確率'];
+            foreach ($slot['slots'] as $itemType => $slotCount) {
+                if (!$slotCount) {
+                    continue;
+                }
+                foreach ($gachaContents[$itemType] as $row) {
+                    $itemProb = $row['確率'];
+                    $itemKey = $row['排出内容']['itemKey'];
+                    $exp = $slotProb / 100 * $itemProb / 100 * $slotCount * 1;
+                    if (empty($expct[$itemKey])) {
+                        $expct[$itemKey] = 0;
+                    }
+                    $expct[$itemKey] += $exp;
+                }
+            }
+        }
+        return $expct;
+    }
+
+    /**
+     * ガチャを最後まで引き切る
+     * @param     array    セット数一覧
+     * @param     array    排出内容一覧
+     * @param     array    スロット一覧
+     *
+     * @return    array    [ 期待値配列, 武運期待値配列 ]
+     */
+    public function batchGacha(array $gachaSets, array $gachaModeContents, array $gachaTypeSlots):array {
+        $collects = [];
+        $colBuun = [];
+        foreach ($gachaSets as $idx => $row) {
+            $gachaMode = $row['gachaMode'];
+            $gachaType = $row['gachaType'];
+            $list = $this->gacha($gachaModeContents[$gachaMode], $gachaTypeSlots[$gachaType]);
+            foreach ($list as $row) {
+                $item = $row['排出内容'];
+                if ($res = $this->getBuun($item)) {
+                    if ($res[0] && $res[1]) {
+                        if (empty($colBuun[$res[0]])) {
+                            $colBuun[$res[0]] = 0;
+                        }
+                        $colBuun[$res[0]] += $res[1];
+                    }
+                }
+                $key = $item['itemKey'];
+                if (empty($collects[$key])) {
+                    $collects[$key] = [
+                        'count' => 0,
+                        'item'  => $item,
+                    ];
+                }
+                $collects[$key]['count']++;
+            }
+        }
+        return [$collects, $colBuun];
+    }
+
+    /**
+     * モード指定されたガチャを1セット引く
+     */
+    public function gacha($gachaContents, $gachaSlots) {
+        $list = [];
+        // スロットの決定
+        $probs  = array_column($gachaSlots, '確率');
+        $values = array_values($gachaSlots);
+        $idx = $this->getProbItems($probs);
+        $slot = $values[$idx];
+        foreach ($slot['slots'] as $itemType => $count) {
+            for ($i=0; $i<$count; $i++) {
+                // アイテムの決定
+                $probs  = array_column($gachaContents[$itemType], '確率');
+                $values = array_values($gachaContents[$itemType]);
+                $idx = $this->getProbItems($probs);
+                $list[] = $values[$idx];
+            }
+        }
+        return $list;
+    }
+
+    /**
+     * くじを引く
+     * 合計が100になる配列を受け取り、確率にそってindexを返す
+     */
+    function getProbItems(array $probs):int|bool {
+        if (!$probs) {
+            return false;
+        }
+        $maxNum = 1000000;
+        $rand = random_int(0, $maxNum)/$maxNum * 100;
+        $sum = 0;
+        $idx = 0;
+        foreach ($probs as $prob) {
+            $sum += $prob;
+            if ($sum >= $rand) {
+                break;
+            }
+            if ($idx >= sizeof($probs)-1) {
+                break;
+            }
+            $idx++;
+        }
+        return $idx;
+    }
+
+    /**
+     * アイテムの武運換算数を取得する
+     *
+     */
+    public function getBuun(array $item):array|bool {
+        $name = '';
+        $buun = 0;
+        switch ($item['type']) {
+        case '武将':
+            $name = $item['name'];
+            switch ($item['rank']) {
+            case '星1':
+                $buun = 15;
+                break;
+            case '星3':
+                $buun = 44;
+                break;
+            case '星4':
+                $buun = 140;
+                break;
+            case '星5':
+                $buun = 340;
+                break;
+            case '星6':
+                $buun = 620;
+                break;
+            default:
+                throw new RuntimeException();
+                break;
+            }
+            break;
+        case '武運':
+            $name = $item['name'];
+            $buun = $item['num'];
+            break;
+        case '宝箱':
+            $name = '選択宝箱';
+            switch ($item['rank']) {
+            case '星3':
+                $buun = 44;
+                break;
+            case '星4':
+                $buun = 140;
+                break;
+            case '星5':
+                $buun = 340;
+                break;
+            case '星6':
+                $buun = 620;
+                break;
+            default:
+                throw new RuntimeException();
+                break;
+            }
+            break;
+        case 'アイテム':
+            break;
+        default:
+            var_dump($item);
+            throw new RuntimeException();
+            break;
+        }
+        if (!$name || !$buun) {
+            return false;
+        }
+        return [$name, $buun];
+    }
+
+
+
+}

@@ -1,17 +1,11 @@
 <?php
 require_once dirname(__DIR__).'/vendor/autoload.php';
-require_once __DIR__.'/config.php';
+require_once dirname(__DIR__).'/config/config.php';
 
-
-$gachaContentsFile = __DIR__.'/gacha_contents.tsv';
-
+$gachaContentsFile = dirname(__DIR__).'/config/gacha_contents.tsv';
 
 $gacha = new \MyApp\Gacha();
-
 $gacha->gachaTypeSlots = $gachaTypeSlots;
 $gacha->gachaSets = $gachaSets;
 $gacha->loadGachaData($gachaContentsFile);
-
-$gachaModeContents = $gacha->gachaModeContents;
-
 

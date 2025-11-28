@@ -3,14 +3,14 @@ require_once __DIR__.'/include.php';
 
 $expct = [];
 $memo = [];
-foreach ($gachaSets as $idx => $row) {
+foreach ($gacha->gachaSets as $idx => $row) {
     $gachaMode = $row['gachaMode'];
     $gachaType = $row['gachaType'];
     #echo "[{$idx}] {$gachaMode} ({$gachaType})\n";;
     if (isset($memo[$gachaMode])) {
         $res = $memo[$gachaMode];
     } else {
-        $res = $gacha->getGachaExpct($gachaModeContents[$gachaMode], $gachaTypeSlots[$gachaType]);
+        $res = $gacha->getGachaExpects($gachaMode, $gachaType);
         $memo[$gachaMode] = $res;
     }
     foreach ($res as $key => $val) {

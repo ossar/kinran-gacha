@@ -3,8 +3,11 @@ namespace MyApp;
 
 class Gacha {
 
-    public $gachaTypeSlots;
+    // ガチャセット数
     public $gachaSets;
+    // ガチャタイプ毎のスロット数情報
+    public $gachaTypeSlots;
+    // ガチャモード毎のガチャ内容
     public $gachaModeContents;
 
     public function loadGachaData($filename) {
@@ -86,9 +89,9 @@ class Gacha {
      * @param    array   排出内容一覧
      * @return   array   武将名一覧
      */
-    public function getBuunKeys(array $gachaModeContents):array {
+    public function getBuunKeys():array {
         $buunKeys = [];
-        foreach ($gachaModeContents as $mode => $row) {
+        foreach ($this->gachaModeContents as $mode => $row) {
             foreach ($row as $itemType => $items) {
                 foreach ($items as $item) {
                     switch ($itemType) {
@@ -120,15 +123,15 @@ class Gacha {
      * @param   array   スロット一覧
      * @return  array   [アイテムのキー=>期待値] の配列
      */
-    function getGachaExpct(array $gachaContents, array $gachaSlots):array {
+    function getGachaExpects(string $gachaMode, string $gachaType) {
         $expct = [];
-        foreach ($gachaSlots as $slot) {
+        foreach ($this->gachaTypeSlots[$gachaType] as $slot) {
             $slotProb = $slot['確率'];
             foreach ($slot['slots'] as $itemType => $slotCount) {
                 if (!$slotCount) {
                     continue;
                 }
-                foreach ($gachaContents[$itemType] as $row) {
+                foreach ($this->gachaModeContents[$gachaMode][$itemType] as $row) {
                     $itemProb = $row['確率'];
                     $itemKey = $row['排出内容']['itemKey'];
                     $exp = $slotProb / 100 * $itemProb / 100 * $slotCount * 1;
@@ -144,19 +147,15 @@ class Gacha {
 
     /**
      * ガチャを最後まで引き切る
-     * @param     array    セット数一覧
-     * @param     array    排出内容一覧
-     * @param     array    スロット一覧
-     *
      * @return    array    [ 期待値配列, 武運期待値配列 ]
      */
-    public function batchGacha(array $gachaSets, array $gachaModeContents, array $gachaTypeSlots):array {
+    public function batchGacha():array {
         $collects = [];
         $colBuun = [];
-        foreach ($gachaSets as $idx => $row) {
+        foreach ($this->gachaSets as $idx => $row) {
             $gachaMode = $row['gachaMode'];
             $gachaType = $row['gachaType'];
-            $list = $this->gacha($gachaModeContents[$gachaMode], $gachaTypeSlots[$gachaType]);
+            $list = $this->pull($gachaMode, $gachaType);
             foreach ($list as $row) {
                 $item = $row['排出内容'];
                 if ($res = $this->getBuun($item)) {
@@ -181,20 +180,19 @@ class Gacha {
     }
 
     /**
-     * モード指定されたガチャを1セット引く
+     * ガチャを1回（1セット）引く
      */
-    public function gacha($gachaContents, $gachaSlots) {
-        $list = [];
+    public function pull(string $gachaMode, string $gachaType) {
         // スロットの決定
-        $probs  = array_column($gachaSlots, '確率');
-        $values = array_values($gachaSlots);
+        $probs  = array_column($this->gachaTypeSlots[$gachaType], '確率');
+        $values = array_values($this->gachaTypeSlots[$gachaType]);
         $idx = $this->getProbItems($probs);
         $slot = $values[$idx];
+        $list = [];
         foreach ($slot['slots'] as $itemType => $count) {
             for ($i=0; $i<$count; $i++) {
-                // アイテムの決定
-                $probs  = array_column($gachaContents[$itemType], '確率');
-                $values = array_values($gachaContents[$itemType]);
+                $probs  = array_column($this->gachaModeContents[$gachaMode][$itemType], '確率');
+                $values = array_values($this->gachaModeContents[$gachaMode][$itemType]);
                 $idx = $this->getProbItems($probs);
                 $list[] = $values[$idx];
             }
@@ -294,7 +292,6 @@ class Gacha {
         }
         return [$name, $buun];
     }
-
 
 
 }

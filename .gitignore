@@ -1,5 +1,6 @@
 out.tsv
 expout.tsv
 
+composer.lock
 
 /vendor/

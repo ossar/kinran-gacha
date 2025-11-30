@@ -123,7 +123,7 @@ class Gacha {
      * @param   array   スロット一覧
      * @return  array   [アイテムのキー=>期待値] の配列
      */
-    function getGachaExpects(string $gachaMode, string $gachaType) {
+    public function getGachaExpects(string $gachaMode, string $gachaType) {
         $expct = [];
         foreach ($this->gachaTypeSlots[$gachaType] as $slot) {
             $slotProb = $slot['確率'];
@@ -131,14 +131,28 @@ class Gacha {
                 if (!$slotCount) {
                     continue;
                 }
-                foreach ($this->gachaModeContents[$gachaMode][$itemType] as $row) {
-                    $itemProb = $row['確率'];
-                    $itemKey = $row['排出内容']['itemKey'];
-                    $exp = $slotProb / 100 * $itemProb / 100 * $slotCount * 1;
-                    if (empty($expct[$itemKey])) {
-                        $expct[$itemKey] = 0;
+                if ($itemType == "*") {
+                    foreach ($this->gachaModeContents[$gachaMode] as $type => $items) {
+                        foreach ($items as $row) {
+                            $itemProb = $row['確率'];
+                            $itemKey = $row['排出内容']['itemKey'];
+                            $exp = $slotProb / 100 * $itemProb / 100 * $slotCount * 1;
+                            if (empty($expct[$itemKey])) {
+                                $expct[$itemKey] = 0;
+                            }
+                            $expct[$itemKey] += $exp;
+                        }
                     }
-                    $expct[$itemKey] += $exp;
+                } else {
+                    foreach ($this->gachaModeContents[$gachaMode][$itemType] as $row) {
+                        $itemProb = $row['確率'];
+                        $itemKey = $row['排出内容']['itemKey'];
+                        $exp = $slotProb / 100 * $itemProb / 100 * $slotCount * 1;
+                        if (empty($expct[$itemKey])) {
+                            $expct[$itemKey] = 0;
+                        }
+                        $expct[$itemKey] += $exp;
+                    }
                 }
             }
         }
@@ -190,11 +204,26 @@ class Gacha {
         $slot = $values[$idx];
         $list = [];
         foreach ($slot['slots'] as $itemType => $count) {
-            for ($i=0; $i<$count; $i++) {
-                $probs  = array_column($this->gachaModeContents[$gachaMode][$itemType], '確率');
-                $values = array_values($this->gachaModeContents[$gachaMode][$itemType]);
-                $idx = $this->getProbItems($probs);
-                $list[] = $values[$idx];
+            if ($itemType == "*") {
+                $items = [];
+                foreach ($this->gachaModeContents[$gachaMode] as $type => $rows) {
+                    foreach ($rows as $row) {
+                        $items[] = $row;
+                    }
+                }
+                $probs  = array_column($items, '確率');
+                $values = array_values($items);
+                for ($i=0; $i<$count; $i++) {
+                    $idx = $this->getProbItems($probs);
+                    $list[] = $values[$idx];
+                }
+            } else {
+                for ($i=0; $i<$count; $i++) {
+                    $probs  = array_column($this->gachaModeContents[$gachaMode][$itemType], '確率');
+                    $values = array_values($this->gachaModeContents[$gachaMode][$itemType]);
+                    $idx = $this->getProbItems($probs);
+                    $list[] = $values[$idx];
+                }
             }
         }
         return $list;
@@ -203,8 +232,10 @@ class Gacha {
     /**
      * くじを引く
      * 合計が100になる配列を受け取り、確率にそってindexを返す
+     * @param    array    [ 20, 30, 15, 25, 10 ] :合計100
+     * @return   int|bool   index 3
      */
-    function getProbItems(array $probs):int|bool {
+    public function getProbItems(array $probs):int|bool {
         if (!$probs) {
             return false;
         }

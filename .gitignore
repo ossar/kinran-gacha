@@ -4,3 +4,5 @@ expout.tsv
 composer.lock
 
 /vendor/
+
+dat/*.tsv

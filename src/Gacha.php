@@ -1,6 +1,8 @@
 <?php
 namespace MyApp;
 
+use RuntimeException;
+
 class Gacha {
 
     // ガチャセット数
@@ -50,12 +52,18 @@ class Gacha {
             'name' => null,
             'num'  => null,
             'rank' => null,
+            'rarity' => null,
         ];
         switch ($type) {
         case '武将':
+            if (!preg_match('/(N|R|SR|UR|UR2)\s*([^\s]+)\s*(星.)/u', $itemStr, $match)) {
+                echo $itemStr,"\n";
+                throw new RuntimeException('Unknown itemStr');
+            }
             $buf = explode(" ", $itemStr);
-            $dat['name'] = trim($buf[0]);
-            $dat['rank'] = trim($buf[1]);
+            $dat['name'] = $match[2];
+            $dat['rank'] = $match[3];
+            $dat['rarity'] = $match[1];
             $dat['num']  = 1;
             break;
         case '武運':
@@ -303,27 +311,21 @@ class Gacha {
         $buun = 0;
         switch ($item['type']) {
         case '武将':
-            $name = $item['name'];
-            switch ($item['rank']) {
-            case '星1':
-                $buun = 15;
-                break;
-            case '星3':
-                $buun = 44;
-                break;
-            case '星4':
-                $buun = 140;
-                break;
-            case '星5':
-                $buun = 340;
-                break;
-            case '星6':
-                $buun = 620;
-                break;
-            default:
+            $buunRarity = [
+                'N'   => ['星1' => 8 , '星2' => 23, '星3' => 53, '星4' => 133,'星5' => 263, ],
+                'R'   => ['星1' => 12, '星2' => 36, '星3' => 81, '星4' => 181,'星5' => 331, ],
+                'SR'  => ['星1' => 15, '星2' => 44, '星3' => 60, '星4' => 120,'星5' => 290, ],
+                'UR'  => ['星1' => 21, '星2' => 32, '星3' => 44, '星4' => 140,'星5' => 340, '星6' => 620 ],
+                'UR2' => ['星1' => 21, '星2' => 32, '星3' => 60, '星4' => 140,'星5' => 340, '星6' => 620 ],
+            ];
+            if (empty($item['rarity']) || empty($item['rank'])) {
                 throw new RuntimeException();
-                break;
             }
+            if (!isset($buunRarity[$item['rarity']][$item['rank']])) {
+                throw new RuntimeException();
+            }
+            $name = $item['name'];
+            $buun = $buunRarity[$item['rarity']][$item['rank']];
             break;
         case '武運':
             $name = $item['name'];

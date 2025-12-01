@@ -5,6 +5,8 @@ use RuntimeException;
 
 class Gacha {
 
+    public $gachaKey;
+    public $gachaName;
     // ガチャセット数
     public $gachaSets;
     // ガチャタイプ毎のスロット数情報

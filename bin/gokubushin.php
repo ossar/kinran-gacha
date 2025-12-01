@@ -1,27 +1,13 @@
 <?php
-require_once dirname(__DIR__).'/vendor/autoload.php';
-$gachaConfig = include dirname(__DIR__).'/config/gacha_config.php';
+require_once __DIR__.'/init.php';
 
-$gachaContentsFile = dirname(__DIR__).'/config/gacha_contents_gokubushin.tsv';
-
-$config = $gachaConfig[2];
-
-echo $config['gacha_name'],"\n";
-
-$gacha = new \MyApp\Gacha();
-$gacha->gachaTypeSlots = $config['gacha_type_slots'];
-$gacha->gachaSets = $config['gacha_sets'];
-$gacha->loadGachaData($gachaContentsFile);
-
-#print_r($gacha->getItemList());
+$gachaKey = 'gokubushin';
+$contentFile = 'gacha_contents_gokubushin.tsv';
+$gacha = gachaObj($gachaKey, $contentFile);
 
 $expct = $gacha->getGachaExpects('通常', '通常');
-#print_r($expct);
-
 $itemList = $gacha->getItemList();
 $buunNames = $gacha->getBuunNames($itemList);
-#print_r($buunNames);
-
 
 $buunExpct = [];
 foreach ($expct as $key => $exp) {
@@ -38,7 +24,7 @@ foreach ($expct as $key => $exp) {
     $buunExpct[$name] += $exp * $buun ;
     #echo "$key\t$exp\t$name\t$buun\n";
 }
-$file = dirname(__DIR__).'/dat/expct_gokubushin.tsv';
+$file = DATA_DIR.'/expct_gokubushin.tsv';
 $fp = fopen($file, "w");
 foreach ([10, 20, 50, 100] as $num) {
     $line = "{$num}セットの武運期待値\n";
@@ -72,7 +58,7 @@ $pull = function($num) use ($gacha, $buunNames ) {
 
 $count = 1000;
 $setNum = 10;
-$outFile = dirname(__DIR__)."/dat/gokubushin-{$setNum}.tsv";
+$outFile = DATA_DIR."/gokubushin-{$setNum}.tsv";
 $fp = fopen($outFile, "w");
 for ($i=0; $i<$count; $i++) {
     $res = $pull($setNum);

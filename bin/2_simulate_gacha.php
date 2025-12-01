@@ -1,10 +1,14 @@
 <?php
-require_once __DIR__.'/include.php';
+require_once __DIR__.'/init.php';
+
+$gachaKey = 'rankup5';
+$contentFile = 'gacha_contents_rankup5.tsv';
+$gacha = gachaObj($gachaKey, $contentFile);
 
 // 集められる武運の一覧を取得
 $buunKeys = $gacha->getBuunKeys();
 
-$fp = fopen(dirname(__DIR__).'/dat/out.tsv', "w");
+$fp = fopen(DATA_DIR.'/out.tsv', "w");
 $line = implode("\t", $buunKeys)."\n";
 fwrite($fp, $line);
 echo $line;

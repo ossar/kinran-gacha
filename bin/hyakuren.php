@@ -1,13 +1,12 @@
 <?php
-require_once __DIR__.'/include_hyakuren.php';
+require_once __DIR__.'/init.php';
 
-$gachaMode = '通常';
-$gachaType = '通常';
+$gachaKey = 'hyakuren';
+$contentFile = 'gacha_contents_hyakuren.tsv';
+$gacha = gachaObj($gachaKey, $contentFile);
 
-$expct = $gacha->getGachaExpects($gachaMode, $gachaType);
-
+$expct = $gacha->getGachaExpects('通常', '通常');
 print_r($expct);
-
 
 $total = 0;
 $buunExpct = [];
@@ -39,7 +38,7 @@ foreach ($expct as $key => $val) {
 echo "\n";
 
 echo "=========武運期待値========\n";
-$fp = fopen(dirname(__DIR__).'/dat/expout.tsv', 'w');
+$fp = fopen(DATA_DIR.'/expout.tsv', 'w');
 foreach ($buunExpct as $name => $exp) {
     $line = "{$name}\t{$exp}\n";
     fwrite($fp, $line);

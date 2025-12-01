@@ -1,6 +1,9 @@
 <?php
+require_once __DIR__.'/init.php';
 
-require_once __DIR__.'/include.php';
+$gachaKey = 'rankup5';
+$contentFile = 'gacha_contents_rankup5.tsv';
+$gacha = gachaObj($gachaKey, $contentFile);
 
 $mode = "通常";
 $type = "通常";

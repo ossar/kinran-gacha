@@ -2,6 +2,7 @@
 
 return [
     [
+        'gacha_key' => 'rankup5',
         'gacha_name' => '星5ランクアップガチャ',
         'gacha_sets'  => [
             1  => [ 'gachaMode'=>'通常'            , 'gachaType' => '通常'     ],
@@ -33,6 +34,7 @@ return [
         ],
     ],
     [
+        'gacha_key' => 'hyakuren',
         'gacha_name' => '百連祭',
         'gacha_sets' => [
             1 => ['gachaMode' => '通常', 'gachaType' => '通常'],
@@ -48,6 +50,7 @@ return [
         ],
     ],
     [
+        'gacha_key' => 'gokubushin',
         'gacha_name' => '極武神',
         'gacha_sets' => [
             1 => ['gachaMode' => '通常', 'gachaType' => '通常'],
@@ -59,3 +62,5 @@ return [
         ],
     ],
 ];
+
+

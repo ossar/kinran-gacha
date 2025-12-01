@@ -1,10 +1,14 @@
 <?php
-require_once __DIR__.'/include_hyakuren.php';
+require_once __DIR__.'/init.php';
+
+$gachaKey = 'hyakuren';
+$contentFile = 'gacha_contents_hyakuren.tsv';
+$gacha = gachaObj($gachaKey, $contentFile);
 
 // 集められる武運の一覧を取得
 $buunKeys = $gacha->getBuunKeys();
 
-$fp = fopen(dirname(__DIR__).'/dat/out_hyakuren.tsv', "w");
+$fp = fopen(DATA_DIR.'/out_hyakuren.tsv', "w");
 
 $line = implode("\t", $buunKeys)."\n";
 fwrite($fp, $line);

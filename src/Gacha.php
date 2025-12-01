@@ -83,6 +83,44 @@ class Gacha {
         return $dat;
     }
 
+    public function getItemList():array {
+        $list = [];
+        foreach ($this->gachaModeContents as $mode => $rows) {
+            foreach ($rows as $itemType => $items) {
+                foreach ($items as $row) {
+                    $item = $row['排出内容'];
+                    if (!isset($list[$item['itemKey']])) {
+                        $list[$item['itemKey']] = $item;
+                    }
+                }
+            }
+        }
+        return $list;
+    }
+
+    public function getBuunNames($items) {
+        $list = [];
+        foreach ($items as $item) {
+            switch ($item['type']) {
+            case '武将':
+                $name = $item['name'];
+                $list[$name] = $name;
+                break;
+            case '武運':
+                $name = $item['name'];
+                $list[$name] = $name;
+                break;
+            case '宝箱':
+                $name = '選択宝箱';
+                $list[$name] = $name;
+                break;
+            default:
+                break;
+            }
+        }
+        return array_values($list);
+    }
+
     /**
      * ガチャで出現する武運の武将一覧を取得する
      *

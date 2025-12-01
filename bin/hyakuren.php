@@ -6,6 +6,8 @@ $gachaType = '通常';
 
 $expct = $gacha->getGachaExpects($gachaMode, $gachaType);
 
+print_r($expct);
+
 
 $total = 0;
 $buunExpct = [];

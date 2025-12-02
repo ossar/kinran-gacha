@@ -40,4 +40,28 @@ function getConfig($key, $gachaConfig) {
     return $res ? $res[0]: false;
 }
 
+/**
+ * 規定セット数の期待値を取得する
+ */
+function getTotalExpect($gacha) {
+    $memo = [];
+    $expct = [];
+    foreach ($gacha->gachaSets as $idx => $row) {
+        $gachaMode = $row['gachaMode'];
+        $gachaType = $row['gachaType'];
+        if (isset($memo[$gachaMode])) {
+            $res = $memo[$gachaMode];
+        } else {
+            $res = $gacha->getGachaExpects($gachaMode, $gachaType);
+            $memo[$gachaMode] = $res;
+        }
+        foreach ($res as $key => $val) {
+            if (!isset($expct[$key])) {
+                $expct[$key] = 0;
+            }
+            $expct[$key] += $val;
+        }
+    }
+    return $expct;
+}
 

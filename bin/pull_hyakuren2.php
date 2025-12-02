@@ -8,8 +8,7 @@ $gacha = gachaObj($gachaKey, $contentFile);
 // 集められる武運の一覧を取得
 $buunKeys = $gacha->getBuunKeys();
 
-$fp = fopen(DATA_DIR.'/out_hyakuren.tsv', "w");
-
+$fp = fopen(DATA_DIR.'/out-hyakuren2.tsv', "w");
 $line = implode("\t", $buunKeys)."\n";
 fwrite($fp, $line);
 echo $line;

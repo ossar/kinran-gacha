@@ -6,14 +6,12 @@ $contentFile = 'gacha_contents_hyakuren.tsv';
 $gacha = gachaObj($gachaKey, $contentFile);
 
 $expct = $gacha->getGachaExpects('通常', '通常');
-print_r($expct);
 
-$total = 0;
+$itemList = $gacha->getItemList();
+
 $buunExpct = [];
 foreach ($expct as $key => $val) {
-    list($itemType, $itemStr) = explode(':', $key);
-    $item = $gacha->parseContent($itemStr, $itemType);
-    if (!$res = $gacha->getBuun($item)) {
+    if (!$res = $gacha->getBuun($itemList[$key])) {
         continue;
     }
     if (!$res[0] || !$res[1]) {
@@ -23,9 +21,7 @@ foreach ($expct as $key => $val) {
     if (!isset($buunExpct[$name])) {
         $buunExpct[$name] = 0;
     }
-    $exp = $buun * $val;
-    $buunExpct[$name] += $exp;
-    $total += $exp;
+    $buunExpct[$name] += $buun * $val;
 }
 
 echo "=========アイテムの期待値========\n";
@@ -38,7 +34,7 @@ foreach ($expct as $key => $val) {
 echo "\n";
 
 echo "=========武運期待値========\n";
-$fp = fopen(DATA_DIR.'/expout.tsv', 'w');
+$fp = fopen(DATA_DIR.'/expect-hyakuren.tsv', 'w');
 foreach ($buunExpct as $name => $exp) {
     $line = "{$name}\t{$exp}\n";
     fwrite($fp, $line);
@@ -46,6 +42,4 @@ foreach ($buunExpct as $name => $exp) {
 }
 fclose($fp);
 echo "\n";
-echo "[武運合計] buun=$total\n";
 
-print_r($res);

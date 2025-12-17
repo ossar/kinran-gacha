@@ -99,6 +99,18 @@ return [
         ],
     ],
     [
+        'gacha_key' => 'pickup6',
+        'gacha_name' => '星6ピックアップ',
+        'gacha_sets' => [
+            1 => ['gachaMode' => '通常', 'gachaType' => '通常'],
+        ],
+        'gacha_type_slots' => [
+            "通常" => [
+                [ "確率" => 100, "slots" => [ "*" => 6 ]],
+            ],
+        ],
+    ],
+    [
         'gacha_key' => 'sr_pickup',
         'gacha_name' => 'SRピックアップ',
         'gacha_sets' => [

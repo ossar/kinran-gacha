@@ -81,8 +81,13 @@ class Gacha {
             }
             break;
         case 'アイテム':
-            $dat['name'] = $itemStr;
-            $dat['num']  = 1;
+            if (preg_match('/(.+)x(\d+)/', $itemStr, $match)) {
+                $dat['name'] = rtrim($match[1]);
+                $dat['num']  = $match[2];
+            } else {
+                $dat['name'] = $itemStr;
+                $dat['num']  = 1;
+            }
             break;
         default:
             var_dump($type);

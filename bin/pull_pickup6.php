@@ -23,8 +23,8 @@ $pull = function($num) use ($gacha, $buunNames ) {
 };
 
 $count = 1000;
-$setNum = 100;
-$outFile = DATA_DIR."/{$gachaKey}-{$setNum}.tsv";
+$setNum = 20;
+$outFile = DATA_DIR.sprintf("/out-%s-%03d.tsv", $gachaKey, $setNum);
 $fp = fopen($outFile, "w");
 for ($i=0; $i<$count; $i++) {
     $res = $pull($setNum);

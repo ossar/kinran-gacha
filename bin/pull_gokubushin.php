@@ -23,9 +23,9 @@ $pull = function($num) use ($gacha, $buunNames ) {
 };
 
 $count = 1000;
-$setNum = 10;
-$outFile = DATA_DIR."/gokubushin-{$setNum}.tsv";
-$fp = fopen($outFile, "w");
+$setNum = 100;
+$outFile = sprintf("out-%s-%03d.tsv", $gachaKey, $setNum);
+$fp = fopen(DATA_DIR.'/'.$outFile, "w");
 for ($i=0; $i<$count; $i++) {
     $res = $pull($setNum);
     if ($i==0) {
@@ -39,4 +39,4 @@ for ($i=0; $i<$count; $i++) {
 }
 fclose($fp);
 
-echo "\n\n{$outFile}\n";
+echo "\n{$outFile}\n";

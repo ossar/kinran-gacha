@@ -11,8 +11,7 @@ $itemList = $gacha->getItemList();
 
 $buunExpct = [];
 foreach ($expct as $key => $exp) {
-    $item = $itemList[$key];
-    if (!$res = $item->getItemBuun()) {
+    if (!$res = $itemList[$key]->getItemBuun()) {
         continue;
     }
     list($name, $buun) = $res;
@@ -22,8 +21,8 @@ foreach ($expct as $key => $exp) {
     $buunExpct[$name] += $exp * $buun ;
 }
 
-$file = DATA_DIR.'/expct_gokubushin.tsv';
-$fp = fopen($file, "w");
+$outFile = "expct_{$gachaKey}.tsv";
+$fp = fopen(DATA_DIR.'/'.$outFile, "w");
 foreach ([10, 20, 50, 100] as $num) {
     $line = "{$num}セットの武運期待値\n";
     fwrite($fp, $line);
@@ -42,4 +41,4 @@ foreach ([10, 20, 50, 100] as $num) {
 }
 fclose($fp);
 
-echo $file,"\n";
+echo "\n{$outFile}\n";

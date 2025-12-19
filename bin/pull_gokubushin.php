@@ -7,7 +7,6 @@ require_once __DIR__.'/init.php';
 
 $gachaKey = 'gokubushin';
 $contentFile = 'gacha_contents_gokubushin.tsv';
-
 $proc = new GachaCommand($gachaKey, $contentFile);
 
 $count = 1000;

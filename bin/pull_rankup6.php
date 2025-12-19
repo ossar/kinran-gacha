@@ -1,31 +1,26 @@
 <?php
 namespace MyApp;
 
-use function MyApp\Utils\{getGacha};
+use MyApp\Command\GachaCommand;
 
 require_once __DIR__.'/init.php';
 
 $gachaKey = 'rankup6';
 $contentFile = 'gacha_contents_rankup6.tsv';
-$gacha = getGacha($gachaKey, $contentFile);
+$proc = new GachaCommand($gachaKey, $contentFile);
 
-// 集められる武運の一覧を取得
-$buunKeys = $gacha->getBuunKeys();
+$repeatCount = 1000;
 
 $outFile = "out-{$gachaKey}.tsv";
 $fp = fopen(DATA_DIR.'/'.$outFile, "w");
-$line = implode("\t", $buunKeys)."\n";
-fwrite($fp, $line);
-echo $line;
-
-$repeatCount = 1000;
 for ($i=0; $i<$repeatCount; $i++) {
-    list($collects, $colBuun) = $gacha->batchGacha();
-    $cols = [];
-    foreach ($buunKeys as $key) {
-        $cols[] = $colBuun[$key]?? 0;
+    list($coll, $collBuun) = $proc->pullNumTimes(1);
+    if ($i==0) {
+        $line = implode("\t", array_keys($collBuun))."\n";
+        fwrite($fp, $line);
+        echo $line;
     }
-    $line = implode("\t", $cols)."\n";
+    $line = implode("\t", $collBuun)."\n";
     fwrite($fp, $line);
     echo $line;
 }

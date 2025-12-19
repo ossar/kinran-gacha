@@ -127,7 +127,7 @@ class Gacha {
     public function getGachaExpects(string $gachaMode, string $gachaType) {
         $expct = [];
         foreach ($this->gachaTypeSlots[$gachaType] as $slot) {
-            $slotProb = $slot['確率'];
+            $slotProb = $slot['prob'];
             foreach ($slot['slots'] as $itemType => $slotCount) {
                 if (!$slotCount) {
                     continue;
@@ -197,7 +197,7 @@ class Gacha {
      */
     public function pull(string $gachaMode, string $gachaType):array {
         // スロットの決定
-        $probs  = array_column($this->gachaTypeSlots[$gachaType], '確率');
+        $probs  = array_column($this->gachaTypeSlots[$gachaType], 'prob');
         $values = array_values($this->gachaTypeSlots[$gachaType]);
         $idx = $this->getProbItems($probs);
         $slot = $values[$idx];

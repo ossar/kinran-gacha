@@ -14,7 +14,7 @@ class Gacha {
     // ガチャモード毎のガチャ内容
     public $gachaModeContents;
 
-    public function loadGachaData($filename) {
+    public function loadGachaData(string $filename):void {
         $dat = [];
         $keys = [];
         $fp = fopen($filename, "r");
@@ -42,12 +42,15 @@ class Gacha {
         $this->gachaModeContents = $dat;
     }
 
-    public function parseProb(string $prob) {
+    public function parseProb(string $prob):float {
         $res = rtrim($prob, "%");
         return floatval($res);
     }
 
-    public function parseContent(string $itemStr, string $type) {
+    /**
+     * @return    array   $dat
+     */
+    public function parseContent(string $itemStr, string $type):array {
         $dat = [
             'itemKey' => "{$type}:{$itemStr}",
             'type' => $type,
@@ -113,7 +116,10 @@ class Gacha {
         return $list;
     }
 
-    public function getBuunNames($items) {
+    /**
+     * @param   array  $items
+     */
+    public function getBuunNames(array $items):array {
         $list = [];
         foreach ($items as $item) {
             switch ($item['type']) {
@@ -249,7 +255,7 @@ class Gacha {
     /**
      * ガチャを1回（1セット）引く
      */
-    public function pull(string $gachaMode, string $gachaType) {
+    public function pull(string $gachaMode, string $gachaType):array {
         // スロットの決定
         $probs  = array_column($this->gachaTypeSlots[$gachaType], '確率');
         $values = array_values($this->gachaTypeSlots[$gachaType]);
@@ -285,7 +291,7 @@ class Gacha {
     /**
      * くじを引く
      * 合計が100になる配列を受け取り、確率にそってindexを返す
-     * @param    array    [ 20, 30, 15, 25, 10 ] :合計100
+     * @param    array      $probs [ 20, 30, 15, 25, 10 ] :合計100
      * @return   int|bool   index 3
      */
     public function getProbItems(array $probs):int|bool {
@@ -311,7 +317,7 @@ class Gacha {
 
     /**
      * アイテムの武運換算数を取得する
-     *
+     * @param   array   $item
      */
     public function getBuun(array $item):array|bool {
         $name = '';

@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace MyApp\Utils;
 
-use MyApp\Gacha;
+use MyApp\Entity\Gacha;
 use const MyApp\{GACHA_CONFIG, CONFIG_DIR};
 
 /**

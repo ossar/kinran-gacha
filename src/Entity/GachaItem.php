@@ -1,5 +1,5 @@
 <?php
-namespace MyApp;
+namespace MyApp\Entity;
 
 use InvalidArgumentException;
 

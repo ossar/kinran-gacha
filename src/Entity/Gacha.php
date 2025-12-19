@@ -1,7 +1,7 @@
 <?php
-namespace MyApp;
+namespace MyApp\Entity;
 
-use MyApp\GachaItem;
+use MyApp\Entity\GachaItem;
 use RuntimeException;
 
 class Gacha {
@@ -17,7 +17,6 @@ class Gacha {
         if (!$fp = fopen($filename, "r")) {
             throw new RuntimeException("cannot open file. {$filename}");
         }
-        ;
         $head = 0;
         while (FALSE !== $line=fgets($fp)) {
             $line = rtrim($line, "\r\n");

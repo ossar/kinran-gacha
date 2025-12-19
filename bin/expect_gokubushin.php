@@ -3,7 +3,7 @@ require_once __DIR__.'/init.php';
 
 $gachaKey = 'gokubushin';
 $contentFile = 'gacha_contents_gokubushin.tsv';
-$gacha = gachaObj($gachaKey, $contentFile);
+$gacha = getGacha($gachaKey, $contentFile);
 
 $expct = getTotalExpect($gacha);
 
@@ -11,10 +11,8 @@ $itemList = $gacha->getItemList();
 
 $buunExpct = [];
 foreach ($expct as $key => $exp) {
-    if (!$res = $gacha->getBuun($itemList[$key])) {
-        continue;
-    }
-    if (!$res[0] || !$res[1]) {
+    $item = $itemList[$key];
+    if (!$res = $item->getItemBuun()) {
         continue;
     }
     list($name, $buun) = $res;

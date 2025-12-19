@@ -1,69 +1,42 @@
 <?php
 require_once __DIR__.'/init.php';
 
-use MyApp\Gacha2;
-use MyApp\GachaItem;
-#use InvalidArgumentException;
+$gachaKey = 'gokubushin';
+$contentFile = 'gacha_contents_gokubushin.tsv';
+$gacha = getGacha($gachaKey, $contentFile);
 
+$itemList = $gacha->getItemList();
+$buunNames = $gacha->getBuunNames($itemList);
 
-$gacha = new Gacha2;
-$gacha->loadGachaModeItems(CONFIG_DIR.'/gacha_contents_rankup6.tsv');
-
-
-print_r($gacha);
-exit;
-
-
-
-
-
-
-function parseProb (string $str):float {
-    return floatval(rtrim($str, '%'));
-}
-
-
-
-
-
-$gachaModeItems = [];
-
-$items = [];
-$fp = fopen(CONFIG_DIR.'/gacha_contents_rankup6.tsv', "r");
-$head = 0;
-while (FALSE!==$line = fgets($fp)) {
-    $line = rtrim($line, "\r\n");
-    list($mode, $type, $label, $prob) = explode("\t", $line);
-    if (!$head) {
-        $head = 1;
-        continue;
+$pull = function($num) use ($gacha, $buunNames ) {
+    $colBuun = [];
+    foreach ($buunNames as $name) {
+        $colBuun[$name] = 0;
     }
-    $item = new GachaItem($type, $label);
-    $gachaModeItems[$mode][] = [
-        'type' => $type,
-        'key'  => $item->key,
-        'item' => $item,
-        'prob' => parseProb($prob),
-    ];
+    for ($i=0; $i<$num; $i++) {
+        list($col, $bun) = $gacha->batchGacha();
+        foreach ($bun as $key => $val) {
+            $colBuun[$key] += $val;
+        }
+    }
+    return $colBuun;
+};
 
+$count = 1000;
+$setNum = 10;
+$outFile = DATA_DIR."/gokubushin-{$setNum}.tsv";
+$fp = fopen($outFile, "w");
+for ($i=0; $i<$count; $i++) {
+    $res = $pull($setNum);
+    if ($i==0) {
+        $line = implode("\t", array_keys($res))."\n";
+        echo $line;
+        fwrite($fp, $line);
+    }
+    $line = implode("\t", $res)."\n";
+    echo $line;
+    fwrite($fp, $line);
 }
 fclose($fp);
 
-foreach ($gachaModeItems as $mode => $rows) {
-    foreach ($rows as $row) {
-        echo sprintf("%s %s \t %s  %f\n"
-            , $mode
-            , $row['type']
-            , $row['item']->key
-            , $row['prob']
-        );
-    }
-}
-
-
-exit;
-
-$type = '武将';
-$label = 'URホカク星3';
-
-
+echo "\n\n{$outFile}\n";

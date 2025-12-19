@@ -3,7 +3,7 @@ require_once __DIR__.'/init.php';
 
 $gachaKey = 'gokubushin';
 $contentFile = 'gacha_contents_gokubushin.tsv';
-$gacha = gachaObj($gachaKey, $contentFile);
+$gacha = getGacha($gachaKey, $contentFile);
 
 $itemList = $gacha->getItemList();
 $buunNames = $gacha->getBuunNames($itemList);
@@ -39,3 +39,4 @@ for ($i=0; $i<$count; $i++) {
 }
 fclose($fp);
 
+echo "\n\n{$outFile}\n";

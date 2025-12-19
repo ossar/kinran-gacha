@@ -30,6 +30,19 @@ function gachaObj($gachaKey, $contentFile) {
     return $gacha;
 }
 
+
+function getGacha($gachaKey, $gachaItemsFile) {
+    $config = getConfig($gachaKey, GACHA_CONFIG);
+    $gacha = new MyApp\Gacha2;
+    $gacha->gachaKey = $config['gacha_key'];
+    $gacha->gachaName = $config['gacha_name'];
+    $gacha->gachaTypeSlots = $config['gacha_type_slots'];
+    $gacha->gachaSets = $config['gacha_sets'];
+    $gacha->loadGachaModeItems(CONFIG_DIR.'/'.$gachaItemsFile);
+    return $gacha;
+}
+
+
 /**
  * 対象のコンフィグを取得する
  */

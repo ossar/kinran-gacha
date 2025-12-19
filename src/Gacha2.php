@@ -57,7 +57,6 @@ class Gacha2 {
             }
         }
         return $list;
-
     }
 
     /**
@@ -87,8 +86,8 @@ class Gacha2 {
     }
 
     /**
-     *
-     *
+     * ガチャで出現する武運の武将一覧を取得する
+     * @return   array   武将名一覧
      */
     public function getBuunKeys():array {
         $buunKeys = [];
@@ -117,6 +116,7 @@ class Gacha2 {
         }
         return array_values($buunKeys);
     }
+
     /**
      * ガチャ1セットの期待値を出す
      *
@@ -161,7 +161,7 @@ class Gacha2 {
     }
 
     /**
-     *
+     * ガチャを最後まで引き切る
      * @return    array
      */
     public function batchGacha():array {
@@ -193,7 +193,7 @@ class Gacha2 {
     }
 
     /**
-     *
+     * ガチャを1回（1セット）引く
      */
     public function pull(string $gachaMode, string $gachaType):array {
         // スロットの決定
@@ -229,8 +229,9 @@ class Gacha2 {
     }
 
     /**
-     *
-     * @param    array    $probs
+     * くじを引く
+     * 合計が100になる配列を受け取り、確率にそってindexを返す
+     * @param    array      $probs
      */
     public function getProbItems(array $probs):int|bool {
         if (!$probs) {

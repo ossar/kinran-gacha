@@ -1,9 +1,10 @@
 <?php
 declare(strict_types=1);
 
-namespace MyApp;
+namespace MyApp\Utils;
 
 use MyApp\Gacha;
+use const MyApp\{GACHA_CONFIG, CONFIG_DIR};
 
 /**
  * ガチャキー

@@ -1,6 +1,8 @@
 <?php
 namespace MyApp;
 
+use function MyApp\Utils\{getGacha};
+
 require_once __DIR__.'/init.php';
 
 $gachaKey = 'hyakuren';
@@ -11,7 +13,7 @@ $expct = $gacha->getGachaExpects('通常', '通常');
 
 $itemList = $gacha->getItemList();
 
-if (false) {
+if (true) {
 
 $buunExpct = [];
 foreach ($expct as $key => $val) {

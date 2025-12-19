@@ -4,7 +4,7 @@
             "MyApp\\": "src/"
         },
         "files": [
-            "src/functions.php"
+            "src/Utils/functions.php"
         ]
     },
     "require": {}

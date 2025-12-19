@@ -1,6 +1,8 @@
 <?php
 namespace MyApp;
 
+use function MyApp\Utils\{getGacha};
+
 require_once __DIR__.'/init.php';
 
 $gachaKey = 'hyakuren';

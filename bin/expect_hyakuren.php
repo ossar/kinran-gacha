@@ -1,29 +1,17 @@
 <?php
 namespace MyApp;
 
-use function MyApp\Utils\{getGacha};
+use MyApp\Command\GachaCommand;
 
 require_once __DIR__.'/init.php';
 
 $gachaKey = 'hyakuren';
 $contentFile = 'gacha_contents_hyakuren.tsv';
-$gacha = getGacha($gachaKey, $contentFile);
 
-$expct = $gacha->getGachaExpects('通常', '通常');
-
-$itemList = $gacha->getItemList();
-
-$buunExpct = [];
-foreach ($expct as $key => $val) {
-    if (!$res = $itemList[$key]->getItemBuun()) {
-        continue;
-    }
-    list($name, $buun) = $res;
-    if (!isset($buunExpct[$name])) {
-        $buunExpct[$name] = 0;
-    }
-    $buunExpct[$name] += $buun * $val;
-}
+$proc = new GachaCommand($gachaKey, $contentFile);
+$expct = $proc->gacha->getGachaExpects('通常', '通常');
+$itemList = $proc->gacha->getItemList();
+$buunExpct = $proc->getBuunExpect($expct, $itemList);
 
 echo "=========アイテムの期待値========\n";
 foreach ($expct as $key => $val) {
@@ -45,4 +33,3 @@ foreach ($buunExpct as $name => $exp) {
 fclose($fp);
 
 echo "\n{$outFile}\n";
-

@@ -1,29 +1,15 @@
 <?php
 namespace MyApp;
 
-use function MyApp\Utils\{getGacha, getTotalExpect};
+use MyApp\Command\GachaCommand;
 
 require_once __DIR__.'/init.php';
 
 $gachaKey = 'gokubushin';
 $contentFile = 'gacha_contents_gokubushin.tsv';
-$gacha = getGacha($gachaKey, $contentFile);
 
-$expct = getTotalExpect($gacha);
-
-$itemList = $gacha->getItemList();
-
-$buunExpct = [];
-foreach ($expct as $key => $exp) {
-    if (!$res = $itemList[$key]->getItemBuun()) {
-        continue;
-    }
-    list($name, $buun) = $res;
-    if (!isset($buunExpct[$name])) {
-        $buunExpct[$name] = 0;
-    }
-    $buunExpct[$name] += $exp * $buun ;
-}
+$proc = new GachaCommand($gachaKey, $contentFile);
+$buunExpct = $proc->getTotalBuunExpect();
 
 $outFile = "expct_{$gachaKey}.tsv";
 $fp = fopen(DATA_DIR.'/'.$outFile, "w");

@@ -3,12 +3,13 @@ require_once __DIR__.'/init.php';
 
 $gachaKey = 'hyakuren';
 $contentFile = 'gacha_contents_hyakuren.tsv';
-$gacha = gachaObj($gachaKey, $contentFile);
+$gacha = getGacha($gachaKey, $contentFile);
 
 // 集められる武運の一覧を取得
 $buunKeys = $gacha->getBuunKeys();
 
-$fp = fopen(DATA_DIR.'/out-hyakuren.tsv', "w");
+$outFile = "out-{$gachaKey}.tsv";
+$fp = fopen(DATA_DIR.'/'.$outFile, "w");
 $line = implode("\t", $buunKeys)."\n";
 fwrite($fp, $line);
 echo $line;
@@ -25,3 +26,5 @@ for ($i=0; $i<$repeatCount; $i++) {
     echo $line;
 }
 fclose($fp);
+
+echo "\n{$outFile}\n";

@@ -1,14 +1,15 @@
 <?php
 require_once __DIR__.'/init.php';
 
-$gachaKey = 'rankup5';
-$contentFile = 'gacha_contents_rankup5.tsv';
+$gachaKey = 'hyakuren';
+$contentFile = 'gacha_contents_hyakuren2.tsv';
 $gacha = getGacha($gachaKey, $contentFile);
 
-/*
-$expct = getTotalExpect($gacha);
+$expct = $gacha->getGachaExpects('通常', '通常');
 
 $itemList = $gacha->getItemList();
+
+if (false) {
 
 $buunExpct = [];
 foreach ($expct as $key => $val) {
@@ -32,22 +33,24 @@ foreach ($expct as $key => $val) {
 echo "\n";
 
 echo "=========武運期待値========\n";
-$fp = fopen(DATA_DIR.'/expect-rankup5.tsv', 'w');
+$outFile = "expect-{$gachaKey}.tsv";
+$fp = fopen(DATA_DIR.'/'.$outFile, 'w');
 foreach ($buunExpct as $name => $exp) {
     $line = "{$name}\t{$exp}\n";
     fwrite($fp, $line);
     echo $line;
 }
 fclose($fp);
-echo "\n";
+
+echo "\n{$outFile}\n";
 
 exit;
- */
+}
 
 // 集められる武運の一覧を取得
 $buunKeys = $gacha->getBuunKeys();
 
-$outFile = "out-{$gachaKey}.tsv";
+$outFile = "out-{$gachaKey}2.tsv";
 $fp = fopen(DATA_DIR.'/'.$outFile, "w");
 $line = implode("\t", $buunKeys)."\n";
 fwrite($fp, $line);

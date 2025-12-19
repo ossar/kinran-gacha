@@ -3,7 +3,7 @@ require_once __DIR__.'/init.php';
 
 $gachaKey = 'rankup5';
 $contentFile = 'gacha_contents_rankup5.tsv';
-$gacha = gachaObj($gachaKey, $contentFile);
+$gacha = getGacha($gachaKey, $contentFile);
 
 $expct = getTotalExpect($gacha);
 
@@ -11,10 +11,7 @@ $itemList = $gacha->getItemList();
 
 $buunExpct = [];
 foreach ($expct as $key => $val) {
-    if (!$res = $gacha->getBuun($itemList[$key])) {
-        continue;
-    }
-    if (!$res[0] || !$res[1]) {
+    if (!$res = $itemList[$key]->getItemBuun()) {
         continue;
     }
     list($name, $buun) = $res;

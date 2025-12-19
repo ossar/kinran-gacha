@@ -1,14 +1,53 @@
 <?php
 require_once __DIR__.'/init.php';
 
-$gachaKey = 'rankup6';
-$contentFile = 'gacha_contents_rankup6.tsv';
+$gachaKey = 'rankup5';
+$contentFile = 'gacha_contents_rankup5.tsv';
 $gacha = getGacha($gachaKey, $contentFile);
+
+/*
+$expct = getTotalExpect($gacha);
+
+$itemList = $gacha->getItemList();
+
+$buunExpct = [];
+foreach ($expct as $key => $val) {
+    if (!$res = $itemList[$key]->getItemBuun()) {
+        continue;
+    }
+    list($name, $buun) = $res;
+    if (!isset($buunExpct[$name])) {
+        $buunExpct[$name] = 0;
+    }
+    $buunExpct[$name] += $buun * $val;
+}
+
+echo "=========アイテムの期待値========\n";
+foreach ($expct as $key => $val) {
+    echo sprintf("%s\t%s\n"
+        , $key
+        , $val
+    );
+}
+echo "\n";
+
+echo "=========武運期待値========\n";
+$fp = fopen(DATA_DIR.'/expect-rankup5.tsv', 'w');
+foreach ($buunExpct as $name => $exp) {
+    $line = "{$name}\t{$exp}\n";
+    fwrite($fp, $line);
+    echo $line;
+}
+fclose($fp);
+echo "\n";
+
+exit;
+ */
 
 // 集められる武運の一覧を取得
 $buunKeys = $gacha->getBuunKeys();
 
-$outFile = 'out-rankup6.tsv';
+$outFile = "out-{$gachaKey}.tsv";
 $fp = fopen(DATA_DIR.'/'.$outFile, "w");
 $line = implode("\t", $buunKeys)."\n";
 fwrite($fp, $line);

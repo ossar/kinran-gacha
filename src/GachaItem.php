@@ -40,7 +40,7 @@ class GachaItem {
             break;
         case '宝箱':
             $rankBuun = [1 => 21, 2 => 32, 3 => 44, 4 => 140, 5 => 340, 6 => 620 ];
-            return ['宝箱', $rankBuun[$this->rank]];
+            return ['選択宝箱', $rankBuun[$this->rank]];
             break;
         default:
             return false;

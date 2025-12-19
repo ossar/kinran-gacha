@@ -1,42 +1,30 @@
 <?php
 require_once __DIR__.'/init.php';
 
-$gachaKey = 'gokubushin';
-$contentFile = 'gacha_contents_gokubushin.tsv';
+$gachaKey = 'rankup6';
+$contentFile = 'gacha_contents_rankup6.tsv';
 $gacha = getGacha($gachaKey, $contentFile);
 
-$itemList = $gacha->getItemList();
-$buunNames = $gacha->getBuunNames($itemList);
+// 集められる武運の一覧を取得
+$buunKeys = $gacha->getBuunKeys();
 
-$pull = function($num) use ($gacha, $buunNames ) {
-    $colBuun = [];
-    foreach ($buunNames as $name) {
-        $colBuun[$name] = 0;
-    }
-    for ($i=0; $i<$num; $i++) {
-        list($col, $bun) = $gacha->batchGacha();
-        foreach ($bun as $key => $val) {
-            $colBuun[$key] += $val;
-        }
-    }
-    return $colBuun;
-};
+$outFile = 'out-rankup6.tsv';
+$fp = fopen(DATA_DIR.'/'.$outFile, "w");
+$line = implode("\t", $buunKeys)."\n";
+fwrite($fp, $line);
+echo $line;
 
-$count = 1000;
-$setNum = 10;
-$outFile = DATA_DIR."/gokubushin-{$setNum}.tsv";
-$fp = fopen($outFile, "w");
-for ($i=0; $i<$count; $i++) {
-    $res = $pull($setNum);
-    if ($i==0) {
-        $line = implode("\t", array_keys($res))."\n";
-        echo $line;
-        fwrite($fp, $line);
+$repeatCount = 1000;
+for ($i=0; $i<$repeatCount; $i++) {
+    list($collects, $colBuun) = $gacha->batchGacha();
+    $cols = [];
+    foreach ($buunKeys as $key) {
+        $cols[] = $colBuun[$key]?? 0;
     }
-    $line = implode("\t", $res)."\n";
-    echo $line;
+    $line = implode("\t", $cols)."\n";
     fwrite($fp, $line);
+    echo $line;
 }
 fclose($fp);
 
-echo "\n\n{$outFile}\n";
+echo "\n{$outFile}\n";

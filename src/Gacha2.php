@@ -56,7 +56,10 @@ class Gacha2 {
 
     }
 
-    public function getBuunNames($items) {
+    /**
+     * @param   array  $items
+     */
+    public function getBuunNames(array $items):array {
         $list = [];
         foreach ($items as $item) {
             switch ($item->type) {
@@ -79,6 +82,37 @@ class Gacha2 {
         return array_values($list);
     }
 
+    /**
+     *
+     *
+     */
+    public function getBuunKeys():array {
+        $buunKeys = [];
+        foreach ($this->gachaModeItems as $mode => $row) {
+            foreach ($row as $itemType => $items) {
+                foreach ($items as $col) {
+                    $item = $col['item'];
+                    switch ($item->type) {
+                    case '武運':
+                        $name = $item->name;
+                        $buunKeys[$name] = $name;
+                        break;
+                    case '武将':
+                        $name = $item->name;
+                        $buunKeys[$name] = $name;
+                        break;
+                    case '宝箱':
+                        $name = '選択宝箱';
+                        $buunKeys[$name] = $name;
+                        break;
+                    default:
+                        break;
+                    }
+                }
+            }
+        }
+        return array_values($buunKeys);
+    }
     /**
      * ガチャ1セットの期待値を出す
      *
@@ -180,7 +214,7 @@ class Gacha2 {
                 }
             } else {
                 for ($i=0; $i<$count; $i++) {
-                    $probs  = array_column($this->gachaModeItems[$gachaMode][$itemType], '確率');
+                    $probs  = array_column($this->gachaModeItems[$gachaMode][$itemType], 'prob');
                     $values = array_values($this->gachaModeItems[$gachaMode][$itemType]);
                     $idx = $this->getProbItems($probs);
                     $list[] = $values[$idx];

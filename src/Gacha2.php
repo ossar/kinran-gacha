@@ -2,18 +2,22 @@
 namespace MyApp;
 
 use MyApp\GachaItem;
+use RuntimeException;
 
 class Gacha2 {
 
-    public $gachaKey;
-    public $gachaName;
-    public $gachaSets;
-    public $gachaTypeSlots;
-    public $gachaModeItems;
+    public string $gachaKey = '';
+    public string $gachaName = '';
+    public array $gachaSets = [];
+    public array $gachaTypeSlots = [];
+    public array $gachaModeItems = [];
 
     public function loadGachaModeItems(string $filename):void {
         $dat = [];
-        $fp = fopen($filename, "r");
+        if (!$fp = fopen($filename, "r")) {
+            throw new RuntimeException("cannot open file. {$filename}");
+        }
+        ;
         $head = 0;
         while (FALSE !== $line=fgets($fp)) {
             $line = rtrim($line, "\r\n");
@@ -36,7 +40,7 @@ class Gacha2 {
         $this->gachaModeItems = $dat;
     }
 
-    public function parseProb(string $prob):string {
+    public function parseProb(string $prob):float {
         return floatval(rtrim($prob, '%'));
     }
 
@@ -134,7 +138,7 @@ class Gacha2 {
                             $itemProb = $row['prob'];
                             $itemKey = $row['item']->key;
                             $exp = $slotProb / 100 * $itemProb / 100 * $slotCount * 1;
-                            if (empty($expct[$itemKey])) {
+                            if (!isset($expct[$itemKey])) {
                                 $expct[$itemKey] = 0;
                             }
                             $expct[$itemKey] += $exp;
@@ -145,7 +149,7 @@ class Gacha2 {
                         $itemProb = $row['prob'];
                         $itemKey = $row['item']->key;
                         $exp = $slotProb / 100 * $itemProb / 100 * $slotCount * 1;
-                        if (empty($expct[$itemKey])) {
+                        if (!isset($expct[$itemKey])) {
                             $expct[$itemKey] = 0;
                         }
                         $expct[$itemKey] += $exp;
@@ -170,7 +174,7 @@ class Gacha2 {
             foreach ($list as $row) {
                 $item = $row['item'];
                 if ($res = $item->getItemBuun()) {
-                    if (empty($colBuun[$res[0]])) {
+                    if (!isset($colBuun[$res[0]])) {
                         $colBuun[$res[0]] = 0;
                     }
                     $colBuun[$res[0]] += $res[1];
@@ -233,7 +237,7 @@ class Gacha2 {
             return false;
         }
         $maxNum = 1000000;
-        $rand = random_int(0, $maxNum)/$maxNum * 100;
+        $rand = random_int(0, $maxNum) * 100 / $maxNum;
         $sum = 0;
         $idx = 0;
         foreach ($probs as $prob) {

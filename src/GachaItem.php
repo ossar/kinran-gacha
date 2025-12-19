@@ -5,11 +5,11 @@ use InvalidArgumentException;
 
 class GachaItem {
 
-    public $key;
-    public $num;
-    public $name;
-    public $rarity;
-    public $rank;
+    public string $key;
+    public int|null $num = null;
+    public string|null $name = null;
+    public string|null $rarity = null;
+    public string|int|null $rank = null;
 
     public function __construct(
         public string $type,
@@ -33,21 +33,20 @@ class GachaItem {
                 'UR'  => [1 => 21, 2 => 32, 3 => 44, 4 => 140, 5 => 340, 6 => 620 ],
                 'UR2' => [1 => 21, 2 => 32, 3 => 60, 4 => 140, 5 => 340, 6 => 620 ],
             ];
-            return [$this->name, $rarityRankBuun[$this->rarity][$this->rank]];
-            break;
+            return isset($this->rarity, $this->rank) ? [$this->name, $rarityRankBuun[$this->rarity][$this->rank]] : false;
         case '武運':
             return [$this->name, $this->num];
-            break;
         case '宝箱':
             $rankBuun = [1 => 21, 2 => 32, 3 => 44, 4 => 140, 5 => 340, 6 => 620 ];
-            return ['選択宝箱', $rankBuun[$this->rank]];
-            break;
+            return isset($this->rank) ? ['選択宝箱', $rankBuun[$this->rank]]: false;
         default:
             return false;
-            break;
         }
     }
 
+    /**
+     *
+     */
     public function parseLabel():void {
         switch ($this->type) {
         case '武将':
@@ -84,10 +83,7 @@ class GachaItem {
             }
             break;
         default:
-            var_dump($this->type);
-            var_dump($this->label);
-            throw new InvalidArgumentException('Unkown type');
-            break;
+            throw new InvalidArgumentException("Unkown type. type={$this->type} label={$this->label}\n");
         }
     }
 

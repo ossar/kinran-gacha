@@ -8,7 +8,7 @@ $gacha = getGacha($gachaKey, $contentFile);
 // 集められる武運の一覧を取得
 $buunKeys = $gacha->getBuunKeys();
 
-$outFile = 'out-rankup6.tsv';
+$outFile = "out-{$gachaKey}.tsv";
 $fp = fopen(DATA_DIR.'/'.$outFile, "w");
 $line = implode("\t", $buunKeys)."\n";
 fwrite($fp, $line);

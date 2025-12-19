@@ -3,7 +3,7 @@ require_once __DIR__.'/init.php';
 
 $gachaKey = 'rankup5';
 $contentFile = 'gacha_contents_rankup5.tsv';
-$gacha = gachaObj($gachaKey, $contentFile);
+$gacha = getGacha($gachaKey, $contentFile);
 
 // 集められる武運の一覧を取得
 $buunKeys = $gacha->getBuunKeys();

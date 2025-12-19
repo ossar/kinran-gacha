@@ -19,21 +19,9 @@ define('GACHA_CONFIG', $res);
  *   - gacha_contents_hyakuren2.tsv
  *   - gacha_contents_gokubushin.tsv
  */
-function gachaObj($gachaKey, $contentFile) {
-    $config = getConfig($gachaKey, GACHA_CONFIG);
-    $gacha = new \MyApp\Gacha();
-    $gacha->gachaKey = $config['gacha_key'];
-    $gacha->gachaName = $config['gacha_name'];
-    $gacha->gachaTypeSlots = $config['gacha_type_slots'];
-    $gacha->gachaSets = $config['gacha_sets'];
-    $gacha->loadGachaData(CONFIG_DIR.'/'.$contentFile);
-    return $gacha;
-}
-
-
 function getGacha($gachaKey, $gachaItemsFile) {
     $config = getConfig($gachaKey, GACHA_CONFIG);
-    $gacha = new MyApp\Gacha2;
+    $gacha = new MyApp\Gacha;
     $gacha->gachaKey = $config['gacha_key'];
     $gacha->gachaName = $config['gacha_name'];
     $gacha->gachaTypeSlots = $config['gacha_type_slots'];

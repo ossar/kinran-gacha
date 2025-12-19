@@ -4,7 +4,7 @@ namespace MyApp;
 use MyApp\GachaItem;
 use RuntimeException;
 
-class Gacha2 {
+class Gacha {
 
     public string $gachaKey = '';
     public string $gachaName = '';

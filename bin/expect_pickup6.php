@@ -9,7 +9,9 @@ $gachaKey = 'pickup6';
 $contentFile = 'gacha_contents_pickup6.tsv';
 
 $proc = new GachaCommand($gachaKey, $contentFile);
-$buunExpct = $proc->getTotalBuunExpect();
+$expct = $proc->getTotalExpect();
+$itemList = $proc->gacha->getItemList();
+$buunExpct = $proc->getBuunExpect($expct, $itemList);
 
 $outFile = "expct_{$gachaKey}.tsv";
 $fp = fopen(DATA_DIR.'/'.$outFile, "w");

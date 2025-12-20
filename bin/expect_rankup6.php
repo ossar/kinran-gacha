@@ -10,7 +10,8 @@ $contentFile = 'gacha_contents_rankup6.tsv';
 
 $proc = new GachaCommand($gachaKey, $contentFile);
 $expct = $proc->getTotalExpect();
-$buunExpct = $proc->getTotalBuunExpect();
+$itemList = $proc->gacha->getItemList();
+$buunExpct = $proc->getBuunExpect($expct, $itemList);
 
 echo "=========アイテムの期待値========\n";
 foreach ($expct as $key => $val) {

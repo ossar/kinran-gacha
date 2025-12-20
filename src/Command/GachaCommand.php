@@ -84,15 +84,6 @@ class GachaCommand {
     }
 
     /**
-     * @return array $buunExpct
-     */
-    public function getTotalBuunExpect():array {
-        $expect = $this->getTotalExpect();
-        $itemList = $this->gacha->getItemList();
-        return $this->getBuunExpect($expect, $itemList);
-    }
-
-    /**
      * @return array $ret
      */
     public function pullNumTimes(int $num):array {

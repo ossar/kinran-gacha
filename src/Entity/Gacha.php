@@ -85,38 +85,6 @@ class Gacha {
     }
 
     /**
-     * ガチャで出現する武運の武将一覧を取得する
-     * @return   array   武将名一覧
-     */
-    public function getBuunKeys():array {
-        $buunKeys = [];
-        foreach ($this->gachaModeItems as $mode => $row) {
-            foreach ($row as $itemType => $items) {
-                foreach ($items as $col) {
-                    $item = $col['item'];
-                    switch ($item->type) {
-                    case '武運':
-                        $name = $item->name;
-                        $buunKeys[$name] = $name;
-                        break;
-                    case '武将':
-                        $name = $item->name;
-                        $buunKeys[$name] = $name;
-                        break;
-                    case '宝箱':
-                        $name = '選択宝箱';
-                        $buunKeys[$name] = $name;
-                        break;
-                    default:
-                        break;
-                    }
-                }
-            }
-        }
-        return array_values($buunKeys);
-    }
-
-    /**
      * ガチャ1セットの期待値を出す
      *
      * @param   array   排出内容

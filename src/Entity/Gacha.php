@@ -150,12 +150,9 @@ class Gacha {
                 }
                 $key = $item->key;
                 if (empty($collects[$key])) {
-                    $collects[$key] = [
-                        'count' => 0,
-                        'item'  => $item,
-                    ];
+                    $collects[$key] = 0;
                 }
-                $collects[$key]['count']++;
+                $collects[$key]++;
             }
         }
         return [$collects, $colBuun];

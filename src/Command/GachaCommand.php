@@ -105,7 +105,7 @@ class GachaCommand {
         for ($i=0; $i<$num; $i++) {
             list($col, $bun) = $this->gacha->batchGacha();
             foreach ($col as $key => $val) {
-                $ret[0][$key] += $val['count'];
+                $ret[0][$key] += $val;
             }
             foreach ($bun as $key => $val) {
                 $ret[1][$key] += $val;

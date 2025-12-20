@@ -1,7 +1,7 @@
 #!/bin/bash
 
-DIR=$(echo "$(pwd)/$(dirname $0)" | sed 's/\/\.$//')
-echo DIR=$DIR
+DIR=$(cd $(dirname $0) && pwd)
+echo $DIR
 
 arr=(
     "expect_gokubushin.php"

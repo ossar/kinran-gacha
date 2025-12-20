@@ -6,7 +6,7 @@ use MyApp\Command\GachaCommand;
 require_once __DIR__.'/init.php';
 
 $gachaKey = 'hyakuren';
-$contentFile = 'gacha_contents_hyakuren2.tsv';
+$contentFile = CONFIG_DIR.'/gacha_contents_hyakuren2.tsv';
 $proc = new GachaCommand($gachaKey, $contentFile);
 
 $outFile = "out-{$gachaKey}2.tsv";

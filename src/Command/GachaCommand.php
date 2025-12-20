@@ -2,9 +2,10 @@
 namespace MyApp\Command;
 
 use MyApp\Entity\Gacha;
-use const MyApp\{GACHA_CONFIG, CONFIG_DIR};
 
 class GachaCommand {
+
+    public static $gacha_config;
 
     public $gacha;
 
@@ -17,13 +18,13 @@ class GachaCommand {
     }
 
     public function getGacha(string $gachaKey, string $contentFile):object {
-        $config = $this->getConfig($gachaKey, GACHA_CONFIG);
+        $config = $this->getConfig($gachaKey, self::$gacha_config);
         $gacha = new Gacha;
         $gacha->gachaKey = $config['gacha_key'];
         $gacha->gachaName = $config['gacha_name'];
         $gacha->gachaTypeSlots = $config['gacha_type_slots'];
         $gacha->gachaSets = $config['gacha_sets'];
-        $gacha->loadGachaModeItems(CONFIG_DIR.'/'.$contentFile);
+        $gacha->loadGachaModeItems($contentFile);
         return $gacha;
     }
 

@@ -6,7 +6,7 @@ use MyApp\Command\GachaCommand;
 require_once __DIR__.'/init.php';
 
 $gachaKey = 'hyakuren';
-$contentFile = 'gacha_contents_hyakuren.tsv';
+$contentFile = CONFIG_DIR.'/gacha_contents_hyakuren.tsv';
 
 $proc = new GachaCommand($gachaKey, $contentFile);
 $expct = $proc->gacha->getGachaExpects('通常', '通常');

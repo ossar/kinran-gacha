@@ -6,7 +6,7 @@ use MyApp\Command\GachaCommand;
 require_once __DIR__.'/init.php';
 
 $gachaKey = 'sr_pickup';
-$contentFile = 'gacha_contents_sr_pickup.tsv';
+$contentFile = CONFIG_DIR.'/gacha_contents_sr_pickup.tsv';
 $proc = new GachaCommand($gachaKey, $contentFile);
 
 $count = 1000;

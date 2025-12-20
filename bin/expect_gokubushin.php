@@ -6,7 +6,7 @@ use MyApp\Command\GachaCommand;
 require_once __DIR__.'/init.php';
 
 $gachaKey = 'gokubushin';
-$contentFile = 'gacha_contents_gokubushin.tsv';
+$contentFile = CONFIG_DIR.'/gacha_contents_gokubushin.tsv';
 
 $proc = new GachaCommand($gachaKey, $contentFile);
 $expct = $proc->getTotalExpect();

@@ -1,13 +1,13 @@
 <?php
 namespace MyApp;
 
-use MyApp\Command\GachaCommand;
+use MyApp\Entity\Gacha;
 
 require_once __DIR__.'/init.php';
 
 $gachaKey = 'rankup6';
 $contentFile = CONFIG_DIR.'/gacha_contents_rankup6.tsv';
-$gacha = GachaCommand::getGacha($gachaKey, $contentFile);
+$gacha = new Gacha($gachaKey, $contentFile);
 
 $repeatCount = 1000;
 

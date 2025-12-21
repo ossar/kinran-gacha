@@ -3,14 +3,20 @@ declare(strict_types=1);
 
 namespace MyApp\Entity;
 
-use MyApp\Command\GachaCommand;
 use MyApp\Entity\GachaItem;
 use RuntimeException;
 
 class Gacha {
 
+    /**
+     * @var  array<mixed>
+     */
+    public static array $gacha_config = [];
+
     public string $gachaKey = '';
+
     public string $gachaName = '';
+
     /**
      * @var  array<mixed>
      */
@@ -23,6 +29,29 @@ class Gacha {
      * @var  array<mixed>
      */
     public array $gachaModeItems = [];
+
+    public function __construct(string $gachaKey, string $contentFile) {
+        if (!$config = self::getConfig($gachaKey, self::$gacha_config)) {
+            throw new RuntimeException("no config for {$gachaKey} {$contentFile}");
+        }
+        $this->gachaKey = $config['gacha_key'];
+        $this->gachaName = $config['gacha_name'];
+        $this->gachaTypeSlots = $config['gacha_type_slots'];
+        $this->gachaSets = $config['gacha_sets'];
+        $this->loadGachaModeItems($contentFile);
+    }
+
+    /**
+     * @param  string $key
+     * @param  array<mixed>  $gachaConfig
+     * @return array<mixed>|bool
+     */
+    public static function getConfig(string $key, array $gachaConfig):array|bool {
+        $res = array_values(array_filter($gachaConfig, function($item) use ($key) {
+            return isset($item['gacha_key']) && $item['gacha_key'] == $key;
+        }));
+        return $res ? $res[0]: false;
+    }
 
     public function loadGachaModeItems(string $filename):void {
         $dat = [];
@@ -223,7 +252,7 @@ class Gacha {
         // スロットの決定
         $probs  = array_column($this->gachaTypeSlots[$gachaType], 'prob');
         $values = array_values($this->gachaTypeSlots[$gachaType]);
-        $idx = GachaCommand::getProbItems($probs);
+        $idx = self::getProbItems($probs);
         $slot = $values[$idx];
         $list = [];
         foreach ($slot['slots'] as $itemType => $count) {
@@ -237,14 +266,14 @@ class Gacha {
                 $probs  = array_column($items, 'prob');
                 $values = $items;
                 for ($i=0; $i<$count; $i++) {
-                    $idx = GachaCommand::getProbItems($probs);
+                    $idx = self::getProbItems($probs);
                     $list[] = $values[$idx];
                 }
             } else {
                 for ($i=0; $i<$count; $i++) {
                     $probs  = array_column($this->gachaModeItems[$gachaMode][$itemType], 'prob');
                     $values = array_values($this->gachaModeItems[$gachaMode][$itemType]);
-                    $idx = GachaCommand::getProbItems($probs);
+                    $idx = self::getProbItems($probs);
                     $list[] = $values[$idx];
                 }
             }
@@ -280,5 +309,30 @@ class Gacha {
         return $ret;
     }
 
+    /**
+     * くじを引く
+     * 合計が100になる配列を受け取り、確率にそってindexを返す
+     * @param    array<number>      $probs
+     */
+    public static function getProbItems(array $probs):int|bool {
+        if (!$probs) {
+            return false;
+        }
+        $maxNum = 1000000;
+        $rand = random_int(0, $maxNum) * 100 / $maxNum;
+        $sum = 0;
+        $idx = 0;
+        foreach ($probs as $prob) {
+            $sum += $prob;
+            if ($sum >= $rand) {
+                break;
+            }
+            if ($idx >= sizeof($probs)-1) {
+                break;
+            }
+            $idx++;
+        }
+        return $idx;
+    }
 
 }

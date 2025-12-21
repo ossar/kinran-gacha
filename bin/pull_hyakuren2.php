@@ -1,13 +1,13 @@
 <?php
 namespace MyApp;
 
-use MyApp\Command\GachaCommand;
+use MyApp\Entity\Gacha;
 
 require_once __DIR__.'/init.php';
 
 $gachaKey = 'hyakuren';
 $contentFile = CONFIG_DIR.'/gacha_contents_hyakuren2.tsv';
-$gacha = GachaCommand::getGacha($gachaKey, $contentFile);
+$gacha = new Gacha($gachaKey, $contentFile);
 
 $outFile = "out-{$gachaKey}2.tsv";
 $fp = fopen(DATA_DIR.'/'.$outFile, "w");

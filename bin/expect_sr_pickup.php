@@ -1,13 +1,13 @@
 <?php
 namespace MyApp;
 
-use MyApp\Command\GachaCommand;
+use MyApp\Entity\Gacha;
 
 require_once __DIR__.'/init.php';
 
 $gachaKey = 'sr_pickup';
 $contentFile = CONFIG_DIR.'/gacha_contents_sr_pickup.tsv';
-$gacha = GachaCommand::getGacha($gachaKey, $contentFile);
+$gacha = new Gacha($gachaKey, $contentFile);
 
 $expct = $gacha->getTotalExpect();
 $itemList = $gacha->getItemList();

@@ -8,10 +8,10 @@ require_once __DIR__.'/init.php';
 $gachaKey = 'pickup6';
 $contentFile = CONFIG_DIR.'/gacha_contents_pickup6.tsv';
 
-$proc = new GachaCommand($gachaKey, $contentFile);
-$expct = $proc->getTotalExpect();
-$itemList = $proc->gacha->getItemList();
-$buunExpct = $proc->getBuunExpect($expct, $itemList);
+$gacha = GachaCommand::getGacha($gachaKey, $contentFile);
+$expct = $gacha->getTotalExpect();
+$itemList = $gacha->getItemList();
+$buunExpct = $gacha->getBuunExpect($expct, $itemList);
 
 $outFile = "expct_{$gachaKey}.tsv";
 $fp = fopen(DATA_DIR.'/'.$outFile, "w");

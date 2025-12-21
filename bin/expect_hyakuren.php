@@ -8,10 +8,10 @@ require_once __DIR__.'/init.php';
 $gachaKey = 'hyakuren';
 $contentFile = CONFIG_DIR.'/gacha_contents_hyakuren.tsv';
 
-$proc = new GachaCommand($gachaKey, $contentFile);
-$expct = $proc->gacha->getGachaExpects('通常', '通常');
-$itemList = $proc->gacha->getItemList();
-$buunExpct = $proc->getBuunExpect($expct, $itemList);
+$gacha = GachaCommand::getGacha($gachaKey, $contentFile);
+$expct = $gacha->getGachaExpects('通常', '通常');
+$itemList = $gacha->getItemList();
+$buunExpct = $gacha->getBuunExpect($expct, $itemList);
 
 echo "=========アイテムの期待値========\n";
 foreach ($expct as $key => $val) {

@@ -9,18 +9,10 @@ class GachaCommand {
 
     public static $gacha_config;
 
-    public $gacha;
-
-    public function __construct(
-        protected string $gachaKey,
-        protected string $contentFile
-    ) {
-        $this->gacha = $this->getGacha($gachaKey, $contentFile);
-
-    }
-
-    public function getGacha(string $gachaKey, string $contentFile):object {
-        $config = $this->getConfig($gachaKey, self::$gacha_config);
+    public static function getGacha(string $gachaKey, string $contentFile):object {
+        if (!$config = self::getConfig($gachaKey, self::$gacha_config)) {
+            return false;
+        }
         $gacha = new Gacha;
         $gacha->gachaKey = $config['gacha_key'];
         $gacha->gachaName = $config['gacha_name'];
@@ -34,7 +26,7 @@ class GachaCommand {
      * @param  string $key
      * @param  array  $gachaConfig
      */
-    public function getConfig(string $key, array $gachaConfig):array|bool {
+    public static function getConfig(string $key, array $gachaConfig):array|bool {
         $res = array_values(array_filter($gachaConfig, function($item) use ($key) {
             return isset($item['gacha_key']) && $item['gacha_key'] == $key;
         }));
@@ -42,77 +34,29 @@ class GachaCommand {
     }
 
     /**
-     * 規定セット数の期待値を取得する
+     * くじを引く
+     * 合計が100になる配列を受け取り、確率にそってindexを返す
+     * @param    array      $probs
      */
-    public function getTotalExpect():array {
-        $memo = [];
-        $expct = [];
-        foreach ($this->gacha->gachaSets as $idx => $row) {
-            $gachaMode = $row['gachaMode'];
-            $gachaType = $row['gachaType'];
-            if (isset($memo[$gachaMode])) {
-                $res = $memo[$gachaMode];
-            } else {
-                $res = $this->gacha->getGachaExpects($gachaMode, $gachaType);
-                $memo[$gachaMode] = $res;
-            }
-            foreach ($res as $key => $val) {
-                if (!isset($expct[$key])) {
-                    $expct[$key] = 0;
-                }
-                $expct[$key] += $val;
-            }
+    public static function getProbItems(array $probs):int|bool {
+        if (!$probs) {
+            return false;
         }
-        return $expct;
+        $maxNum = 1000000;
+        $rand = random_int(0, $maxNum) * 100 / $maxNum;
+        $sum = 0;
+        $idx = 0;
+        foreach ($probs as $prob) {
+            $sum += $prob;
+            if ($sum >= $rand) {
+                break;
+            }
+            if ($idx >= sizeof($probs)-1) {
+                break;
+            }
+            $idx++;
+        }
+        return $idx;
     }
-
-    /**
-     * @param  array $expect
-     * @param  array $itemList
-     * @return array $buunExpect
-     */
-    public function getBuunExpect(array $expect, array $itemList):array {
-        $buunExpect = [];
-        foreach ($expect as $key => $exp) {
-            if (!$res = $itemList[$key]->getItemBuun()) {
-                continue;
-            }
-            list($name, $buun) = $res;
-            if (!isset($buunExpect[$name])) {
-                $buunExpect[$name] = 0;
-            }
-            $buunExpect[$name] += $exp * $buun ;
-        }
-        return $buunExpect;
-    }
-
-    /**
-     * @return array $ret
-     */
-    public function pullNumTimes(int $num):array {
-        static $defColl = [], $defCollBuun = [];
-        if (empty($defColl)) {
-            $itemList = $this->gacha->getItemList();
-            foreach ($itemList as $key => $row) {
-                $defColl[$key] = 0;
-            }
-            $buunNames = $this->gacha->getBuunNames($itemList);
-            foreach ($buunNames as $name) {
-                $defCollBuun[$name] = 0;
-            }
-        }
-        $ret = [$defColl, $defCollBuun];
-        for ($i=0; $i<$num; $i++) {
-            list($col, $bun) = $this->gacha->batchGacha();
-            foreach ($col as $key => $val) {
-                $ret[0][$key] += $val;
-            }
-            foreach ($bun as $key => $val) {
-                $ret[1][$key] += $val;
-            }
-        }
-        return $ret;
-    }
-
 
 }

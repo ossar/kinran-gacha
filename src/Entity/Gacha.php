@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace MyApp\Entity;
 
+use MyApp\Command\GachaCommand;
 use MyApp\Entity\GachaItem;
 use RuntimeException;
 
@@ -130,6 +131,51 @@ class Gacha {
     }
 
     /**
+     * @param  array $expect
+     * @param  array $itemList
+     * @return array $buunExpect
+     */
+    public function getBuunExpect(array $expect, array $itemList):array {
+        $buunExpect = [];
+        foreach ($expect as $key => $exp) {
+            if (!$res = $itemList[$key]->getItemBuun()) {
+                continue;
+            }
+            list($name, $buun) = $res;
+            if (!isset($buunExpect[$name])) {
+                $buunExpect[$name] = 0;
+            }
+            $buunExpect[$name] += $exp * $buun ;
+        }
+        return $buunExpect;
+    }
+
+    /**
+     * 規定セット数の期待値を取得する
+     */
+    public function getTotalExpect():array {
+        $memo = [];
+        $expct = [];
+        foreach ($this->gachaSets as $idx => $row) {
+            $gachaMode = $row['gachaMode'];
+            $gachaType = $row['gachaType'];
+            if (isset($memo[$gachaMode])) {
+                $res = $memo[$gachaMode];
+            } else {
+                $res = $this->getGachaExpects($gachaMode, $gachaType);
+                $memo[$gachaMode] = $res;
+            }
+            foreach ($res as $key => $val) {
+                if (!isset($expct[$key])) {
+                    $expct[$key] = 0;
+                }
+                $expct[$key] += $val;
+            }
+        }
+        return $expct;
+    }
+
+    /**
      * ガチャを最後まで引き切る
      * @return    array
      */
@@ -165,7 +211,7 @@ class Gacha {
         // スロットの決定
         $probs  = array_column($this->gachaTypeSlots[$gachaType], 'prob');
         $values = array_values($this->gachaTypeSlots[$gachaType]);
-        $idx = $this->getProbItems($probs);
+        $idx = GachaCommand::getProbItems($probs);
         $slot = $values[$idx];
         $list = [];
         foreach ($slot['slots'] as $itemType => $count) {
@@ -179,14 +225,14 @@ class Gacha {
                 $probs  = array_column($items, 'prob');
                 $values = array_values($items);
                 for ($i=0; $i<$count; $i++) {
-                    $idx = $this->getProbItems($probs);
+                    $idx = GachaCommand::getProbItems($probs);
                     $list[] = $values[$idx];
                 }
             } else {
                 for ($i=0; $i<$count; $i++) {
                     $probs  = array_column($this->gachaModeItems[$gachaMode][$itemType], 'prob');
                     $values = array_values($this->gachaModeItems[$gachaMode][$itemType]);
-                    $idx = $this->getProbItems($probs);
+                    $idx = GachaCommand::getProbItems($probs);
                     $list[] = $values[$idx];
                 }
             }
@@ -195,29 +241,32 @@ class Gacha {
     }
 
     /**
-     * くじを引く
-     * 合計が100になる配列を受け取り、確率にそってindexを返す
-     * @param    array      $probs
+     * @return array $ret
      */
-    public function getProbItems(array $probs):int|bool {
-        if (!$probs) {
-            return false;
-        }
-        $maxNum = 1000000;
-        $rand = random_int(0, $maxNum) * 100 / $maxNum;
-        $sum = 0;
-        $idx = 0;
-        foreach ($probs as $prob) {
-            $sum += $prob;
-            if ($sum >= $rand) {
-                break;
+    public function pullNumTimes(int $num):array {
+        static $defColl = [], $defCollBuun = [];
+        if (empty($defColl)) {
+            $itemList = $this->getItemList();
+            foreach ($itemList as $key => $row) {
+                $defColl[$key] = 0;
             }
-            if ($idx >= sizeof($probs)-1) {
-                break;
+            $buunNames = $this->getBuunNames($itemList);
+            foreach ($buunNames as $name) {
+                $defCollBuun[$name] = 0;
             }
-            $idx++;
         }
-        return $idx;
+        $ret = [$defColl, $defCollBuun];
+        for ($i=0; $i<$num; $i++) {
+            list($col, $bun) = $this->batchGacha();
+            foreach ($col as $key => $val) {
+                $ret[0][$key] += $val;
+            }
+            foreach ($bun as $key => $val) {
+                $ret[1][$key] += $val;
+            }
+        }
+        return $ret;
     }
+
 
 }

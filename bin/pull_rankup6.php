@@ -7,14 +7,14 @@ require_once __DIR__.'/init.php';
 
 $gachaKey = 'rankup6';
 $contentFile = CONFIG_DIR.'/gacha_contents_rankup6.tsv';
-$proc = new GachaCommand($gachaKey, $contentFile);
+$gacha = GachaCommand::getGacha($gachaKey, $contentFile);
 
 $repeatCount = 1000;
 
 $outFile = "out-{$gachaKey}.tsv";
 $fp = fopen(DATA_DIR.'/'.$outFile, "w");
 for ($i=0; $i<$repeatCount; $i++) {
-    list($coll, $collBuun) = $proc->pullNumTimes(1);
+    list($coll, $collBuun) = $gacha->pullNumTimes(1);
     if ($i==0) {
         $line = implode("\t", array_keys($collBuun))."\n";
         fwrite($fp, $line);

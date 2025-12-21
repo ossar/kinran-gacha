@@ -1,9 +1,11 @@
 #!/bin/bash
 
 DIR=$(cd $(dirname $0) && pwd)
-echo $DIR
 
-if [ -d /opt/homebrew/bin ]; then
+echo "uname = $(uname)"
+echo "DIR = ${DIR}"
+
+if [[ "$(uname)" == "Darwin" ]]; then
     cmd="/opt/homebrew/bin/php"
 else
     cmd="/usr/bin/php"

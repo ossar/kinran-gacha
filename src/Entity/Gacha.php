@@ -71,7 +71,6 @@ class Gacha {
             }
             $item = new GachaItem($type, $label);
             $dat[$mode][$type][] = [
-                'type' => $type,
                 'item' => $item,
                 'prob' => $this->parseProb($prob),
             ];

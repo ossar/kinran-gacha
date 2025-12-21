@@ -68,6 +68,9 @@ class GachaItem {
         }
     }
 
+    /**
+     * @return  array<mixed>
+     */
     public function getItemBuun():array|bool {
         switch ($this->type) {
         case '武将':

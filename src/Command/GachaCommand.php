@@ -4,14 +4,18 @@ declare(strict_types=1);
 namespace MyApp\Command;
 
 use MyApp\Entity\Gacha;
+use RuntimeException;
 
 class GachaCommand {
 
-    public static $gacha_config;
+    /**
+     * @var  array<mixed>
+     */
+    public static array $gacha_config = [];
 
-    public static function getGacha(string $gachaKey, string $contentFile):object|bool {
+    public static function getGacha(string $gachaKey, string $contentFile):object {
         if (!$config = self::getConfig($gachaKey, self::$gacha_config)) {
-            return false;
+            throw new RuntimeException("no config for {$gachaKey} {$contentFile}");
         }
         $gacha = new Gacha;
         $gacha->gachaKey = $config['gacha_key'];
@@ -24,7 +28,8 @@ class GachaCommand {
 
     /**
      * @param  string $key
-     * @param  array  $gachaConfig
+     * @param  array<mixed>  $gachaConfig
+     * @return array<mixed>|bool
      */
     public static function getConfig(string $key, array $gachaConfig):array|bool {
         $res = array_values(array_filter($gachaConfig, function($item) use ($key) {
@@ -36,7 +41,7 @@ class GachaCommand {
     /**
      * くじを引く
      * 合計が100になる配列を受け取り、確率にそってindexを返す
-     * @param    array      $probs
+     * @param    array<number>      $probs
      */
     public static function getProbItems(array $probs):int|bool {
         if (!$probs) {

@@ -11,8 +11,17 @@ class Gacha {
 
     public string $gachaKey = '';
     public string $gachaName = '';
+    /**
+     * @var  array<mixed>
+     */
     public array $gachaSets = [];
+    /**
+     * @var  array<mixed>
+     */
     public array $gachaTypeSlots = [];
+    /**
+     * @var  array<mixed>
+     */
     public array $gachaModeItems = [];
 
     public function loadGachaModeItems(string $filename):void {
@@ -46,6 +55,9 @@ class Gacha {
         return floatval(rtrim($prob, '%'));
     }
 
+    /**
+     * @return   array<mixed>
+     */
     public function getItemList():array {
         $list = [];
         foreach ($this->gachaModeItems as $mode => $rows) {
@@ -62,7 +74,8 @@ class Gacha {
     }
 
     /**
-     * @param   array  $items
+     * @param   array<mixed>  $items
+     * @return  array<string>
      */
     public function getBuunNames(array $items):array {
         $list = [];
@@ -89,9 +102,9 @@ class Gacha {
 
     /**
      * ガチャ1セットの期待値を出す
-     * @return  array   [アイテムのキー=>期待値] の配列
+     * @return  array<string, int>   [アイテムのキー=>期待値] の配列
      */
-    public function getGachaExpects(string $gachaMode, string $gachaType) {
+    public function getGachaExpects(string $gachaMode, string $gachaType):array {
         $expct = [];
         foreach ($this->gachaTypeSlots[$gachaType] as $slot) {
             $slotProb = $slot['prob'];
@@ -128,9 +141,9 @@ class Gacha {
     }
 
     /**
-     * @param  array $expect
-     * @param  array $itemList
-     * @return array $buunExpect
+     * @param  array<mixed> $expect
+     * @param  array<mixed> $itemList
+     * @return array<string, int> $buunExpect
      */
     public function getBuunExpect(array $expect, array $itemList):array {
         $buunExpect = [];
@@ -149,6 +162,7 @@ class Gacha {
 
     /**
      * 規定セット数の期待値を取得する
+     * @return    array<string, int>
      */
     public function getTotalExpect():array {
         $memo = [];
@@ -174,7 +188,7 @@ class Gacha {
 
     /**
      * ガチャを最後まで引き切る
-     * @return    array
+     * @return    array<mixed>
      */
     public function batchGacha():array {
         $collects = [];
@@ -203,6 +217,7 @@ class Gacha {
 
     /**
      * ガチャを1回（1セット）引く
+     * @return  array<mixed>
      */
     public function pull(string $gachaMode, string $gachaType):array {
         // スロットの決定
@@ -238,7 +253,7 @@ class Gacha {
     }
 
     /**
-     * @return array $ret
+     * @return array<mixed> $ret
      */
     public function pullNumTimes(int $num):array {
         static $defColl = [], $defCollBuun = [];

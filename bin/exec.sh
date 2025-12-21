@@ -3,6 +3,12 @@
 DIR=$(cd $(dirname $0) && pwd)
 echo $DIR
 
+if [ -d /opt/homebrew/bin ]; then
+    cmd="/opt/homebrew/bin/php"
+else
+    cmd="/usr/bin/php"
+fi
+
 arr=(
     "expect_gokubushin.php"
     "expect_hyakuren.php"
@@ -22,5 +28,5 @@ arr=(
 for name in ${arr[@]}
 do
     echo "[execute] " $name
-    /usr/bin/php ${DIR}/${name} 1>/dev/null
+    $cmd ${DIR}/${name} 1>/dev/null
 done

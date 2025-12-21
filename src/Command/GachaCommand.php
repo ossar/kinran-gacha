@@ -9,7 +9,7 @@ class GachaCommand {
 
     public static $gacha_config;
 
-    public static function getGacha(string $gachaKey, string $contentFile):object {
+    public static function getGacha(string $gachaKey, string $contentFile):object|bool {
         if (!$config = self::getConfig($gachaKey, self::$gacha_config)) {
             return false;
         }

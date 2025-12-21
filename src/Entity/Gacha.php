@@ -89,9 +89,6 @@ class Gacha {
 
     /**
      * ガチャ1セットの期待値を出す
-     *
-     * @param   array   排出内容
-     * @param   array   スロット一覧
      * @return  array   [アイテムのキー=>期待値] の配列
      */
     public function getGachaExpects(string $gachaMode, string $gachaType) {
@@ -223,7 +220,7 @@ class Gacha {
                     }
                 }
                 $probs  = array_column($items, 'prob');
-                $values = array_values($items);
+                $values = $items;
                 for ($i=0; $i<$count; $i++) {
                     $idx = GachaCommand::getProbItems($probs);
                     $list[] = $values[$idx];

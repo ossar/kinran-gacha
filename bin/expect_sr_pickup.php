@@ -7,8 +7,8 @@ require_once __DIR__.'/init.php';
 
 $gachaKey = 'sr_pickup';
 $contentFile = CONFIG_DIR.'/gacha_contents_sr_pickup.tsv';
-
 $gacha = GachaCommand::getGacha($gachaKey, $contentFile);
+
 $expct = $gacha->getTotalExpect();
 $itemList = $gacha->getItemList();
 $buunExpct = $gacha->getBuunExpect($expct, $itemList);

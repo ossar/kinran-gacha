@@ -7,8 +7,8 @@ require_once __DIR__.'/init.php';
 
 $gachaKey = 'hyakuren';
 $contentFile = CONFIG_DIR.'/gacha_contents_hyakuren.tsv';
-
 $gacha = GachaCommand::getGacha($gachaKey, $contentFile);
+
 $expct = $gacha->getGachaExpects('通常', '通常');
 $itemList = $gacha->getItemList();
 $buunExpct = $gacha->getBuunExpect($expct, $itemList);

@@ -7,8 +7,8 @@ require_once __DIR__.'/init.php';
 
 $gachaKey = 'rankup6';
 $contentFile = CONFIG_DIR.'/gacha_contents_rankup6.tsv';
-
 $gacha = GachaCommand::getGacha($gachaKey, $contentFile);
+
 $expct = $gacha->getTotalExpect();
 $itemList = $gacha->getItemList();
 $buunExpct = $gacha->getBuunExpect($expct, $itemList);

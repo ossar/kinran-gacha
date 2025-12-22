@@ -8,24 +8,31 @@ use RuntimeException;
 
 class Gacha {
 
-    /**
-     * @var  array<mixed>
-     */
-    public static array $gacha_config = [];
-
     public string $gachaKey = '';
 
     public string $gachaName = '';
 
     /**
+     * ガチャのセット数・スロット内容の定義リスト
+     * あらかじめ登録しておく
+     * @var  array<mixed>
+     */
+    public static array $gacha_config = [];
+
+    /**
+     * ガチャのセット内容
      * @var  array<mixed>
      */
     public array $gachaSets = [];
+
     /**
+     * ガチャのスロット内容
      * @var  array<mixed>
      */
     public array $gachaTypeSlots = [];
+
     /**
+     * ガチャのアイテムデータ
      * @var  array<mixed>
      */
     public array $gachaModeItems = [];
@@ -38,7 +45,7 @@ class Gacha {
         $this->gachaName = $config['gacha_name'];
         $this->gachaTypeSlots = $config['gacha_type_slots'];
         $this->gachaSets = $config['gacha_sets'];
-        $this->loadGachaModeItems($contentFile);
+        $this->gachaModeItems = $this->parseGachaModeItems($contentFile);
     }
 
     /**
@@ -53,20 +60,26 @@ class Gacha {
         return $res ? $res[0]: false;
     }
 
-    public function loadGachaModeItems(string $filename):void {
+    /**
+     * @return  array<mixed>
+     */
+    public function parseGachaModeItems(string $filename, bool $head=true):array {
         $dat = [];
         if (!$fp = fopen($filename, "r")) {
             throw new RuntimeException("cannot open file. {$filename}");
         }
-        $head = 0;
+        $keys = [];
         while (FALSE !== $line=fgets($fp)) {
             $line = rtrim($line, "\r\n");
             if (!$line) {
                 continue;
             }
             list($mode, $type, $label, $prob) = explode("\t", $line);
-            if (!$head) {
-                $head=1;
+            if ($head && empty($keys)) {
+                $keys[] = $mode;
+                $keys[] = $type;
+                $keys[] = $label;
+                $keys[] = $prob;
                 continue;
             }
             $item = new GachaItem($type, $label);
@@ -76,7 +89,7 @@ class Gacha {
             ];
         }
         fclose($fp);
-        $this->gachaModeItems = $dat;
+        return $dat;
     }
 
     public function parseProb(string $prob):float {

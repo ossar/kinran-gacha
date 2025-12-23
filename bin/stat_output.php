@@ -21,8 +21,6 @@ $files = [
     'out-sr_pickup-100.tsv',
 ];
 
-
-
 foreach ($files as $f) {
     if (!$fp = fopen(DATA_DIR.'/'.$f, 'r')) {
         throw new RuntimeException();
@@ -42,15 +40,12 @@ foreach ($files as $f) {
         }
         foreach ($cols as $idx => $val) {
             $key = $keys[$idx];
-            $dat[$key][] = $val;
+            $dat[$key][] = (float)$val;
         }
     }
     fclose($fp);
 
     foreach ($dat as $key => $rows) {
-        if (!$size = sizeof($rows)) {
-            continue;
-        }
         $analyze[$key] = [
             'average' => Average::mean($rows),
             'median' => Average::median($rows),
@@ -69,6 +64,5 @@ foreach ($files as $f) {
         }
         echo $key."\t".implode("\t", $rows)."\n";
     }
-    #print_r($analyze);
     echo "\n";
 }

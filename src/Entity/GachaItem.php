@@ -12,6 +12,7 @@ class GachaItem {
     public string|null $name = null;
     public string|null $rarity = null;
     public string|int|null $rank = null;
+    public string|null $boxType = null;
 
     public function __construct(
         public string $type,
@@ -47,8 +48,17 @@ class GachaItem {
             $this->name = trim($match[1]);
             break;
         case '宝箱':
+            // 星6箱
+            // 星6宝箱
+            // 星6武将選択宝箱
+            // 星6追想選択宝箱
             if (!preg_match('/星(\d)宝?箱/u', $this->label, $match)) {
                 throw new InvalidArgumentException("Unkown format:  [{$this->type}] {$this->label}");
+            }
+            if (false!==mb_strpos($this->label, '追想', 0, 'UTF-8')) {
+                $this->boxType = '追想';
+            } else {
+                $this->boxType = '武将';
             }
             $this->num = 1;
             $this->name = $match[0];
@@ -85,8 +95,11 @@ class GachaItem {
         case '武運':
             return [$this->name, $this->num];
         case '宝箱':
-            $rankBuun = [1 => 21, 2 => 32, 3 => 44, 4 => 140, 5 => 340, 6 => 620 ];
-            return isset($this->rank) ? ['選択宝箱', $rankBuun[$this->rank]]: false;
+            if ($this->boxType=='武将') {
+                $rankBuun = [1 => 21, 2 => 32, 3 => 44, 4 => 140, 5 => 340, 6 => 620 ];
+                return isset($this->rank) ? ['選択宝箱', $rankBuun[$this->rank]]: false;
+            }
+            return false;
         default:
             return false;
         }

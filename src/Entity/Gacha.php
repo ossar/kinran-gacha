@@ -41,10 +41,10 @@ class Gacha {
         if (!$config = self::getConfig($gachaKey, self::$gacha_config)) {
             throw new RuntimeException("no config for {$gachaKey} {$contentFile}");
         }
-        $this->gachaKey = $config['gacha_key'];
-        $this->gachaName = $config['gacha_name'];
-        $this->gachaTypeSlots = $config['gacha_type_slots'];
-        $this->gachaSets = $config['gacha_sets'];
+        $this->gachaKey = $config['key'];
+        $this->gachaName = $config['name'];
+        $this->gachaTypeSlots = $config['slot_type'];
+        $this->gachaSets = $config['sets'];
         $this->gachaModeItems = $this->parseGachaModeItems($contentFile);
     }
 
@@ -55,7 +55,7 @@ class Gacha {
      */
     public static function getConfig(string $key, array $gachaConfig):array|bool {
         $res = array_values(array_filter($gachaConfig, function($item) use ($key) {
-            return isset($item['gacha_key']) && $item['gacha_key'] == $key;
+            return isset($item['key']) && $item['key'] == $key;
         }));
         return $res ? $res[0]: false;
     }
@@ -209,8 +209,8 @@ class Gacha {
         $memo = [];
         $expct = [];
         foreach ($this->gachaSets as $idx => $row) {
-            $gachaMode = $row['gachaMode'];
-            $gachaType = $row['gachaType'];
+            $gachaMode = $row['mode'];
+            $gachaType = $row['slot_type'];
             if (isset($memo[$gachaMode])) {
                 $res = $memo[$gachaMode];
             } else {
@@ -235,8 +235,8 @@ class Gacha {
         $collects = [];
         $colBuun = [];
         foreach ($this->gachaSets as $idx => $row) {
-            $gachaMode = $row['gachaMode'];
-            $gachaType = $row['gachaType'];
+            $gachaMode = $row['mode'];
+            $gachaType = $row['slot_type'];
             $list = $this->pull($gachaMode, $gachaType);
             foreach ($list as $row) {
                 $item = $row['item'];

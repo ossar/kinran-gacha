@@ -1,0 +1,94 @@
+- key: 'rankup5'
+  name: '星5ランクアップガチャ'
+  sets:
+    1:  { mode: '通常'            , slot_type: '通常'     }
+    2:  { mode: '通常'            , slot_type: '通常'     }
+    3:  { mode: '武将星3〜4確定'  , slot_type: '武将確定' }
+    4:  { mode: '通常'            , slot_type: '通常'     }
+    5:  { mode: '宝箱星3〜4箱確定', slot_type: '宝箱確定' }
+    6:  { mode: '通常'            , slot_type: '通常'     }
+    7:  { mode: '武将星4確定'     , slot_type: '武将確定' }
+    8:  { mode: '通常'            , slot_type: '通常'     }
+    9:  { mode: '宝箱星4箱確定'   , slot_type: '宝箱確定' }
+    10: { mode: '宝箱星5箱確定'   , slot_type: '宝箱確定' }
+  slot_type:
+    武将確定:
+      - { prob: 100,  slots: { '武将': 1, '武運': 3, 'アイテム': 2, '宝箱': 0 }}
+    宝箱確定:
+      - { prob: 100,  slots: { '武将': 0, '武運': 5, 'アイテム': 0, '宝箱': 1 }}
+    通常:
+      - { prob: 10.5, slots: { '武将': 0, '武運': 2, 'アイテム': 4, '宝箱': 0 }}
+      - { prob: 35.0, slots: { '武将': 0, '武運': 3, 'アイテム': 3, '宝箱': 0 }}
+      - { prob: 24.5, slots: { '武将': 0, '武運': 4, 'アイテム': 2, '宝箱': 0 }}
+      - { prob:  4.5, slots: { '武将': 1, '武運': 2, 'アイテム': 3, '宝箱': 0 }}
+      - { prob: 15.0, slots: { '武将': 1, '武運': 3, 'アイテム': 2, '宝箱': 0 }}
+      - { prob: 10.5, slots: { '武将': 1, '武運': 4, 'アイテム': 1, '宝箱': 0 }}
+
+- key:  'hyakuren'
+  name: '百連祭'
+  sets:
+    1: { mode: '通常', slot_type: '通常' }
+    2: { mode: '通常', slot_type: '通常' }
+    3: { mode: '通常', slot_type: '通常' }
+    4: { mode: '通常', slot_type: '通常' }
+    5: { mode: '通常', slot_type: '通常' }
+  slot_type:
+    通常:
+      - { prob: 100, slots: { '*': 100 }}
+
+- key: 'gokubushin'
+  name: '極武神'
+  sets:
+    1: { mode: '通常', slot_type: '通常' }
+  slot_type:
+    通常:
+      - { prob: 100, slots: { '*': 6 }}
+
+- key: 'rankup6'
+  name: '星6ランクアップガチャ'
+  sets :
+    1 : { mode: '通常'           , slot_type: '通常'     }
+    2 : { mode: '通常'           , slot_type: '通常'     }
+    3 : { mode: '武将星3〜4確定' , slot_type: '武将確定' }
+    4 : { mode: '通常'           , slot_type: '通常'     }
+    5 : { mode: '武将星3〜4確定' , slot_type: '武将確定' }
+    6 : { mode: '通常'           , slot_type: '通常'     }
+    7 : { mode: '武将星3〜4確定' , slot_type: '武将確定' }
+    8 : { mode: '通常'           , slot_type: '通常'     }
+    9 : { mode: '武将星4確定'    , slot_type: '武将確定' }
+    10: { mode: '通常'           , slot_type: '通常'     }
+    11: { mode: '通常'           , slot_type: '通常'     }
+    12: { mode: '武将星5確定'    , slot_type: '武将確定' }
+    13: { mode: '通常'           , slot_type: '通常'     }
+    14: { mode: '通常'           , slot_type: '通常'     }
+    15: { mode: '宝箱星6箱確定'  , slot_type: '宝箱確定' }
+  slot_type:
+    武将確定:
+      - { prob: 100,  slots: {'武将':  1,'武運':  3, 'アイテム':  2, '宝箱':  0 }}
+    宝箱確定:
+      - { prob: 100,  slots: {'武将':  0,'武運':  5, 'アイテム':  0, '宝箱':  1 }}
+    通常:
+      - { prob: 10.5, slots: {'武将':  0,'武運':  2, 'アイテム':  4, '宝箱':  0 }}
+      - { prob: 35.0, slots: {'武将':  0,'武運':  3, 'アイテム':  3, '宝箱':  0 }}
+      - { prob: 24.5, slots: {'武将':  0,'武運':  4, 'アイテム':  2, '宝箱':  0 }}
+      - { prob:  4.5, slots: {'武将':  1,'武運':  2, 'アイテム':  3, '宝箱':  0 }}
+      - { prob: 15.0, slots: {'武将':  1,'武運':  3, 'アイテム':  2, '宝箱':  0 }}
+      - { prob: 10.5, slots: {'武将':  1,'武運':  4, 'アイテム':  1, '宝箱':  0 }}
+
+- key: 'pickup6'
+  name: '星6ピックアップ'
+  sets:
+    1: { mode: '通常', slot_type: '通常' }
+  slot_type:
+    通常:
+      - { prob: 100, slots: { '*': 6 }}
+
+- key: 'sr_pickup'
+  name: 'SRピックアップ'
+  sets:
+    1: { mode: '通常', slot_type: '通常'}
+  slot_type:
+    通常:
+     - { prob: 100, slots: { '*': 10 }}
+
+

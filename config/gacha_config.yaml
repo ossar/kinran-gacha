@@ -91,4 +91,13 @@
     通常:
      - { prob: 100, slots: { '*': 10 }}
 
+- key: 're_pickup'
+  name: '年末復刻ピックアップ'
+  sets:
+    1: { mode: '通常', slot_type: '通常'}
+  slot_type:
+    通常:
+     - { prob: 100, slots: { '*': 6 }}
+
+
 

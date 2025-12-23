@@ -1,0 +1,36 @@
+<?php
+namespace MyApp;
+
+use MyApp\Entity\Gacha;
+
+require_once __DIR__.'/init.php';
+
+$gachaKey = 're_pickup';
+$contentFile = CONFIG_DIR.'/gacha_contents_re_pickup.tsv';
+$gacha = new Gacha($gachaKey, $contentFile);
+
+$expct = $gacha->getTotalExpect();
+$itemList = $gacha->getItemList();
+$buunExpct = $gacha->getBuunExpect($expct, $itemList);
+
+$outFile = "expct_{$gachaKey}.tsv";
+$fp = fopen(DATA_DIR.'/'.$outFile, "w");
+foreach ([10, 20, 50, 100] as $num) {
+    $line = "{$num}セットの武運期待値\n";
+    fwrite($fp, $line);
+    echo $line;
+    foreach ($buunExpct as $name => $buun) {
+        $line = sprintf("%s\t%6.1f\n"
+            , $name
+            , $buun * $num
+        );
+        fwrite($fp, $line);
+        echo $line;
+    }
+    $line = "\n";
+    fwrite($fp, $line);
+    echo $line;
+}
+fclose($fp);
+
+echo "\n{$outFile}\n";

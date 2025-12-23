@@ -51,9 +51,9 @@ class Gacha {
     /**
      * @param  string $key
      * @param  array<mixed>  $gachaConfig
-     * @return array<mixed>|bool
+     * @return array<mixed>|false
      */
-    public static function getConfig(string $key, array $gachaConfig):array|bool {
+    public static function getConfig(string $key, array $gachaConfig):array|false {
         $res = array_values(array_filter($gachaConfig, function($item) use ($key) {
             return isset($item['key']) && $item['key'] == $key;
         }));
@@ -264,7 +264,9 @@ class Gacha {
         // スロットの決定
         $probs  = array_column($this->gachaTypeSlots[$gachaType], 'prob');
         $values = array_values($this->gachaTypeSlots[$gachaType]);
-        $idx = self::getProbItems($probs);
+        if (false===$idx = self::getProbItems($probs)) {
+            throw new RuntimeException('no prob array');
+        }
         $slot = $values[$idx];
         $list = [];
         foreach ($slot['slots'] as $itemType => $count) {
@@ -278,14 +280,18 @@ class Gacha {
                 $probs  = array_column($items, 'prob');
                 $values = $items;
                 for ($i=0; $i<$count; $i++) {
-                    $idx = self::getProbItems($probs);
+                    if (false===$idx = self::getProbItems($probs)) {
+                        throw new RuntimeException('no prob array');
+                    }
                     $list[] = $values[$idx];
                 }
             } else {
                 for ($i=0; $i<$count; $i++) {
                     $probs  = array_column($this->gachaModeItems[$gachaMode][$itemType], 'prob');
                     $values = array_values($this->gachaModeItems[$gachaMode][$itemType]);
-                    $idx = self::getProbItems($probs);
+                    if (false===$idx = self::getProbItems($probs)) {
+                        throw new RuntimeException('no prob array');
+                    }
                     $list[] = $values[$idx];
                 }
             }
@@ -326,7 +332,7 @@ class Gacha {
      * 合計が100になる配列を受け取り、確率にそってindexを返す
      * @param    array<number>      $probs
      */
-    public static function getProbItems(array $probs):int|bool {
+    public static function getProbItems(array $probs):int|false {
         if (!$probs) {
             return false;
         }

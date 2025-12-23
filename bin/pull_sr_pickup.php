@@ -13,7 +13,9 @@ $count = 1000;
 $setNum = 100;
 
 $outFile = sprintf("out-%s-%03d.tsv", $gachaKey, $setNum);
-$fp = fopen(DATA_DIR.'/'.$outFile, "w");
+if (!$fp = fopen(DATA_DIR.'/'.$outFile, "w")) {
+    die('cannot open file '.$outFile);
+}
 for ($i=0; $i<$count; $i++) {
     list($coll, $collBuun) = $gacha->pullNumTimes($setNum);
     if ($i==0) {

@@ -12,6 +12,4 @@ define('MyApp\DATA_DIR', APP_ROOT.'/dat');
 
 require_once APP_ROOT.'/vendor/autoload.php';
 
-#Gacha::$gacha_config = require CONFIG_DIR.'/gacha_config.php';
-
 Gacha::$gacha_config = Yaml::parseFile(CONFIG_DIR.'/gacha_config.yaml');

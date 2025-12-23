@@ -79,9 +79,9 @@ class GachaItem {
     }
 
     /**
-     * @return  array<mixed>
+     * @return  array<mixed>|false
      */
-    public function getItemBuun():array|bool {
+    public function getItemBuun():array|false {
         switch ($this->type) {
         case '武将':
             $rarityRankBuun = [

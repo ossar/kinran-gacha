@@ -8,6 +8,7 @@
         "phpstan/phpstan": "^2.1"
     },
     "require": {
-        "symfony/yaml": "^8.0"
+        "symfony/yaml": "^8.0",
+        "markrogoyski/math-php": "^2.13"
     }
 }

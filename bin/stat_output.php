@@ -1,27 +1,35 @@
 <?php
 namespace MyApp;
 
+use MyApp\Entity\Gacha;
 use RuntimeException;
 use MathPHP\Statistics\Descriptive;
 use MathPHP\Statistics\Average;
+use Symfony\Component\Yaml\Yaml;
 
 require_once __DIR__.'/init.php';
 
-$files = [
-    'out-gokubushin-050.tsv',
-    'out-hyakuren.tsv',
-    'out-hyakuren2.tsv',
-    'out-pickup6-100.tsv',
-    'out-rankup5.tsv',
-    'out-rankup6.tsv',
-    'out-re_pickup-010.tsv',
-    'out-re_pickup-020.tsv',
-    'out-re_pickup-050.tsv',
-    'out-re_pickup-100.tsv',
-    'out-sr_pickup-100.tsv',
+$gacha_config = Yaml::parseFile(CONFIG_DIR.'/gacha_config.yaml');
+
+$gachaList = [
+    ['gokubushin' , 'out-gokubushin-050.tsv' ,  50 ],
+    ['hyakuren'   , 'out-hyakuren2.tsv'      ,   5 ],
+    ['pickup6'    , 'out-pickup6-100.tsv'    , 100 ],
+    ['rankup5'    , 'out-rankup5.tsv'        ,  10 ],
+    ['rankup6'    , 'out-rankup6.tsv'        ,  15 ],
+    ['re_pickup'  , 'out-re_pickup-010.tsv'  ,  10 ],
+    ['re_pickup'  , 'out-re_pickup-020.tsv'  ,  20 ],
+    ['re_pickup'  , 'out-re_pickup-050.tsv'  ,  50 ],
+    ['re_pickup'  , 'out-re_pickup-100.tsv'  , 100 ],
+    ['sr_pickup'  , 'out-sr_pickup-100.tsv'  , 100 ],
 ];
 
-foreach ($files as $f) {
+ob_start();
+$init = 1;
+foreach ($gachaList as $row) {
+    $config = Gacha::getConfig($row[0], $gacha_config);
+    $f = $row[1];
+    $sets = $row[2];
     if (!$fp = fopen(DATA_DIR.'/'.$f, 'r')) {
         throw new RuntimeException();
     }
@@ -55,14 +63,34 @@ foreach ($files as $f) {
             'per70'   => Descriptive::percentile($rows, 70),
         ];
     }
-    echo "{$f}\n";
-    $init = 1;
     foreach ($analyze as $key => $rows) {
         if ($init) {
             $init = 0;
-            echo "name\t".implode("\t", array_keys($rows))."\n";
+            echo sprintf("%s\t%s\t%s\t%s\t%s\t%s\n"
+                , 'file'
+                , 'key'
+                , 'sets'
+                , 'name'
+                , 'buun'
+                , implode("\t", array_keys($rows))
+            );
         }
-        echo $key."\t".implode("\t", $rows)."\n";
+        echo sprintf("%s\t%s\t%s\t%s\t%s\t%s\n"
+            , $f
+            , $config['key']
+            , $sets
+            , $config['name']
+            , $key
+            , implode("\t", $rows)
+        );
     }
-    echo "\n";
 }
+$outfile = DATA_DIR.'/stat.tsv';
+$output = ob_get_clean();
+file_put_contents($outfile, $output);
+
+echo $output, "\n";
+echo $outfile, "\n";
+
+
+

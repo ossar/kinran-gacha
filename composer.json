@@ -9,6 +9,7 @@
     },
     "require": {
         "symfony/yaml": "^8.0",
-        "markrogoyski/math-php": "^2.13"
+        "markrogoyski/math-php": "^2.13",
+        "composer/semver": "^3.4"
     }
 }

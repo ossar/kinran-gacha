@@ -44,6 +44,14 @@
     通常:
       - { prob: 100, slots: { '*': 6 }}
 
+- key: 'gokubushin_denrimi'
+  name: '極武神(田里弥)'
+  sets:
+    1: { mode: '通常', slot_type: '通常' }
+  slot_type:
+    通常:
+      - { prob: 100, slots: { '*': 6 }}
+
 - key: 'rankup6'
   name: '星6ランクアップガチャ'
   sets :

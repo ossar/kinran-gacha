@@ -22,6 +22,7 @@ $gachaList = [
     ['re_pickup'  , 'out-re_pickup-050.tsv'  ,  50 ],
     ['re_pickup'  , 'out-re_pickup-100.tsv'  , 100 ],
     ['sr_pickup'  , 'out-sr_pickup-100.tsv'  , 100 ],
+    ['gokubushin_denrimi' , 'out-gokubushin_denrimi-023.tsv' ,  23 ],
 ];
 
 ob_start();
